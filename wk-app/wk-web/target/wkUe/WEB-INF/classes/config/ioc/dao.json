@@ -1,0 +1,57 @@
+var ioc = {
+		conf : {
+			type : "org.nutz.ioc.impl.PropertiesProxy",
+			fields : {
+				paths : ["config/custom/"]
+			}
+		},
+	    dataSource : {
+			factory : "$conf#make",
+			args : ["com.alibaba.druid.pool.DruidDataSource", "db."],
+	        type : "com.alibaba.druid.pool.DruidDataSource",
+	        events : {
+	        	create : "init",
+	            depose : 'close'
+	        }
+	    },
+		dao : {
+			type : "org.nutz.dao.impl.NutDao",
+			args : [{refer:"dataSource"}],
+			fields : {
+				executor : {refer:"cacheExecutor"},
+				interceptors : [
+//					"log", // 默认的日志还需要的： 输出SQL语句到日志,这是NutDao默认情况下唯一启用的拦截器
+					"time" // 加个时间又如何呢?打印sql执行耗时，也会同步打印相应sql，所以可以屏蔽以上log
+				]
+			}
+		},
+		cacheExecutor : {
+			type : "org.nutz.plugins.cache.dao.CachedNutDaoExecutor",
+			fields : {
+				cacheProvider : {refer:"cacheProvider"},
+				cachedTableNames : ["sys_user", "sys_role", "sys_menu"]
+			}
+		},
+		/*
+		// 基于内存的简单LRU实现
+		cacheProvider : {
+			type : "org.nutz.plugins.cache.dao.impl.provider.MemoryDaoCacheProvider",
+			fields : {
+				cacheSize : 10000 // 缓存的对象数
+			},
+			events : {
+				create : "init"
+			}
+		}
+		*/
+		// 基于Ehcache的DaoCacheProvider
+		cacheProvider : {
+			type : "org.nutz.plugins.cache.dao.impl.provider.EhcacheDaoCacheProvider",
+			fields : {
+				cacheManager : {refer:"cacheManager"} // 引用ehcache.json中定义的CacheManager
+			},
+			events : {
+				create : "init"
+			}
+		}
+};

@@ -1,0 +1,210 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/eq/planeseat" id="goBack" data-pjax><i class="ti-angle-left"></i>${msg['globals.button.back']}</a>
+    </div>
+</header>
+
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:500px;">
+        <section class="panel panel-form">
+            <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
+                  action="${base}/platform/eq/planeseat/addDo" method="post">
+                <div class="row mb10">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label for="seatnum" class="col-sm-2 control-label">${msg['eq.planeseat.column.seatnum']}</label>
+                            <div class="col-sm-8" id="numDiv">
+                            <input type="text" id="seatnum" class="form-control" name="seatnum" data-parsley-required="true" placeholder="${msg['eq.planeseat.column.seatnum']}">
+                                <span style="color:red " id="errImfo" hidden>该编码已经存在</span>
+                            </div>
+                            <img src="/assets/img/loading.gif" id="loading" hidden>
+                        </div>
+                        <div class="form-group">
+                            <label for="seatname" class="col-sm-2 control-label">${msg['eq.planeseat.column.seatname']}</label>
+                            <div class="col-sm-8">
+                            <input type="text" id="seatname" class="form-control" name="seatname" data-parsley-required="true" placeholder="${msg['eq.planeseat.column.seatname']}">
+                            </div>
+                        </div>
+                        <!--20180306zhf1207-->
+                        <div class="form-group">
+                            <label for="position" class="col-sm-2 control-label">${msg['eq.stake.column.position']}</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="position" class="form-control" name="position" data-parsley-required="true" placeholder="请从下面地图中选取坐标位置" readonly>
+                            </div>
+                        </div>
+
+                      <!--  <div class="form-group">
+                            <label for="airportid" class="col-sm-2 control-label">${msg['eq.planeseat.column.airportid']}</label>
+                            <div class="col-sm-8">
+                            <input type="text" id="airportid" class="form-control" name="airportid" data-parsley-required="true" placeholder="${msg['eq.planeseat.column.airportid']}">
+                            </div>
+                        </div>-->
+
+                        <div class="form-group">
+                            <label for="airport" class="col-sm-2 control-label">${msg['eq.planeseat.column.airportid']}</label>
+                            <div class="col-sm-4">
+                                <div class="input-group">
+                                    <input id="airport" name="airports" type="text" class="form-control" placeholder="选择机场"
+                                           value="${baseAirport.airportname!}" data-parsley-required="false" validate="true" readonly/>
+                                    <span class="input-group-btn">
+                                                        <button type="button" class="btn btn-primary" data-toggle="modal" href="${base}/platform/base/person/selectAirport"
+                                                                data-target="#dialogSelectAirport"><i class="ti-plus"></i>选择
+                                                        </button>
+                                                    </span>
+                                </div>
+                                <input type="hidden" id="airportid" name="airportid" value="${baseAirport.id!}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tipinput" class="col-sm-2 control-label">搜索地址</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" id="tipinput"/>
+                            </div>
+                        </div>
+
+                        <!--地图-->
+                        <div class="form-group">
+                            <div class="col-sm-2">
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="modal-body" id="maps" style="height:400px;width: 800px; margin: 0; padding: 0;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3"></div>
+                <div class="col-lg-6">
+                    <div class="form-group text-center">
+                        <label></label>
+
+                        <div>
+                            <button class="btn btn-primary btn-block btn-lg btn-parsley" data-loading-text="${msg['globals.button.submit.tip']}">${msg['globals.button.submit']}</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+<div id="dialogSelectAirport" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" style="width: 700px;">
+        <div class="modal-content" style="width: 700px;">
+
+        </div>
+    </div>
+</div>
+
+<!--高德地图-->
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=de8519526746616cb6dfaed57aee2f17&callback=init"></script>
+<script language="JavaScript">
+    //20180319zhf1808
+    var flag = true;
+    //编码校验
+    $("#seatnum").blur(function () {
+        $.ajax({
+            type: "POST",
+            url: "/platform/eq/planeseat/getCountByseatnum",
+            data: {seatnum:$("#seatnum").val()},
+            beforeSend:function () {
+                $("#loading").show();
+            },
+            success: function(count){
+                if(count > 0){
+                    //已经存在
+                    $("#errImfo").show();
+                    $("#numDiv").addClass("has-error");
+                    flag = false;
+                }else{
+                    $("#errImfo").hide();
+                    $("#numDiv").removeClass("has-error");
+                    flag = true;
+                }
+            },
+            complete:function () {
+
+                $("#loading").hide();
+            }
+        });
+        return flag;
+    });
+
+    //20180306zhf1207
+    var map;
+    var init=function () {
+        map = new AMap.Map('maps', {
+            resizeEnable: true,
+            zoom:17
+        });
+        map.plugin(["AMap.ToolBar"], function() {
+            map.addControl(new AMap.ToolBar());
+        });
+        map.on('click', function(e) {
+            $("#position").val(e.lnglat.getLng() + ',' + e.lnglat.getLat());
+        });
+
+        map.plugin('AMap.Autocomplete',function(){//回调函数
+            //实例化Autocomplete
+            var autoOptions = {
+                city: "", //城市，默认全国
+                input:"tipinput"//使用联想输入的input的id
+            };
+            autocomplete= new AMap.Autocomplete(autoOptions);
+            AMap.event.addListener(autocomplete, "select", select);
+            //TODO: 使用autocomplete对象调用相关功能
+        });
+        function select(e) {
+            if (e.poi && e.poi.location) {
+                map.setZoom(15);
+                map.setCenter(e.poi.location);
+            }
+        }
+        //默认设置卫星地图
+        addsatellLayer();
+    }
+    var buildingLayer = new AMap.Buildings(); //实例化3D地图图层
+    var satellLayer = new AMap.TileLayer.Satellite({zIndex: 10}); //实例化卫星图
+    function addsatellLayer() {
+        satellLayer.setMap(map); //在map中添加卫星图
+        buildingLayer.setMap(null);
+        map.setZoom(15.5);
+    }
+
+    $(document).ready(function () {
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                if(!flag){
+                    $("#seatnum").focus();
+                    return false;
+                }
+                form.find("button:submit").button("loading");
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    form.resetForm();
+                } else {
+                    Toast.error(data.msg);
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    });
+
+    $("#dialogSelectAirport").on("hidden.bs.modal", function () {
+
+        $("#airport").val(airportObj[0].airportname);
+        $("#airportid").val(airportObj[0].id);
+
+        $(this).removeData("bs.modal");
+        //alert($("#airportId").val());
+    });
+</script>
+<%}%>
+
+

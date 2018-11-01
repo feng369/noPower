@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="37px" height="43px" viewBox="0 0 37 43" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>锁 copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="桩位监控4" transform="translate(-451.000000, -316.000000)">
+            <g id="锁-copy" transform="translate(451.000000, 316.000000)">
+                <g id="锁-copy-24">
+                    <g transform="translate(0.178793, 0.629232)">
+                        <g id="锁">
+                            <ellipse id="Oval-Copy-2" fill="#9B9B9B" cx="18.3615906" cy="18.4222165" rx="18.3615906" ry="18.4222165"></ellipse>
+                            <path d="M18.3615906,34.1495423 C9.71519974,34.1495423 2.70023391,27.1114146 2.70023391,18.4222165 C2.70023391,9.73301854 9.71519974,2.69489081 18.3615906,2.69489081 C27.0079814,2.69489081 34.0229472,9.73301854 34.0229472,18.4222165 C34.0229472,27.1114146 27.0079814,34.1495423 18.3615906,34.1495423 Z M18.3615906,31.9537053 C25.8212182,31.9537053 31.8627601,25.8922156 31.8627601,18.4222165 C31.8627601,10.9522175 25.8212182,4.89072777 18.3615906,4.89072777 C10.9019629,4.89072777 4.86042103,10.9522175 4.86042103,18.4222165 C4.86042103,25.8922156 10.9019629,31.9537053 18.3615906,31.9537053 Z" id="Oval-Copy-3" fill="#FFFFFF" fill-rule="nonzero"></path>
+                            <polygon id="Triangle" fill="#9B9B9B" transform="translate(18.631614, 39.011753) scale(1, -1) translate(-18.631614, -39.011753) " points="18.631614 36.3026032 22.6819648 41.7209022 14.5812631 41.7209022"></polygon>
+                            <ellipse id="Oval-2" fill="#9B9B9B" cx="18.3615906" cy="20.8516728" rx="1.14996949" ry="1.15376644"></ellipse>
+                            <rect id="Rectangle-5" fill="#9B9B9B" x="18.0740982" y="18.8325815" width="1" height="2.88441609" rx="0.5"></rect>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

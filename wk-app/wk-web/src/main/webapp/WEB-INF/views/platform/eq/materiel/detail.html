@@ -1,0 +1,59 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">设备</a>
+                        <!--<small>${obj.id}</small>-->
+                    </div>
+                </header>
+                <div class="list-group">
+                    <table class="table table-bordered table-striped mg-t datatable">
+                        <tbody>
+                        <tr>
+                            <td>${msg['eq.materiel.column.eqnum']}</td><td>${obj.eqnum}</td>
+                        </tr>
+                        <tr>
+                            <td>${msg['eq.materiel.column.eqcode']}</td><td>${obj.eqcode}</td>
+                        </tr>
+                        <tr>
+                            <td>${msg['eq.materiel.column.eqname']}</td><td>${obj.eqname}</td>
+                        </tr>
+                        <tr>
+                            <td>${msg['eq.materiel.column.eqtype']}</td><td>${obj.eqtype}</td>
+                        </tr>
+                        <tr>
+                            <td>${msg['eq.materiel.column.typeid']}</td><td><%if(!isEmpty(type)){%>${type.name}<%}%></td>
+                        </tr>
+                        <tr>
+                            <td>${msg['eq.materiel.column.starttime']}</td><td>${obj.starttime}</td>
+                        </tr>
+                        <tr>
+                            <td>${msg['eq.materiel.column.equnitid']}</td><td><%if(!isEmpty(unit)){%>${unit.name}<%}%></td>
+                        </tr>
+                        <tr>
+                            <td>${msg['eq.materiel.column.equnitphone']}</td><td>${obj.equnitphone}</td>
+                        </tr>
+                        <!--<tr>-->
+                        <!--<td>${msg['eq.materiel.column.eqfac']}</td><td>${obj.eqfac}</td>-->
+                        <!--</tr>-->
+                        <tr>
+                            <td>${msg['eq.materiel.column.eqcolor']}</td><td>${obj.eqcolor}</td>
+                        </tr>
+                        <tr>
+                            <td>${msg['eq.materiel.column.stakeid']}</td><td><%if(!isEmpty(stake)){%>${stake.stakename}<%}%></td>
+                        </tr>
+                        <tr>
+                            <td>${msg['eq.materiel.column.lockid']}</td><td>${obj.lockid}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">${msg['globals.button.ok']}</button>
+</div>

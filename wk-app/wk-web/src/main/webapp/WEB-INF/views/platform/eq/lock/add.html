@@ -1,0 +1,275 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/eq/lock" id="goBack" data-pjax><i class="ti-angle-left"></i>${msg['globals.button.back']}</a>
+    </div>
+</header>
+
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:500px;">
+        <section class="panel panel-form">
+            <form id="addForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
+                  action="${base}/platform/eq/lock/addDo" method="post">
+                <div class="row mb10">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label for="locknum" class="col-sm-2 control-label">${msg['eq.lock.column.locknum']}</label>
+                            <div class="col-sm-8" id="numDiv">
+                            <input type="text" id="locknum" class="form-control" name="locknum" data-parsley-required="true" placeholder="${msg['eq.lock.column.locknum']}">
+                                <span style="color:red " id="errImfo" hidden>该编码已经存在</span>
+                            </div>
+                            <img src="/assets/img/loading.gif" id="loading" hidden>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="lockcode" class="col-sm-2 control-label">锁编号</label>
+                            <div class="col-sm-8">
+                            <input type="text" id="lockcode" class="form-control" name="lockcode" data-parsley-required="true" placeholder="请填入锁的编号}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lockstatus" class="col-sm-2 control-label">${msg['eq.lock.column.lockstatus']}</label>
+                            <div class="col-sm-8">
+                            <!--<input type="text" id="lockstatus" class="form-control" name="lockstatus" data-parsley-required="true" placeholder="${msg['eq.lock.column.lockstatus']}">-->
+                            <select id="lock" class="form-control" disabled>
+                                <option value="0" selected>空闲</option>
+                                <option value="1" >使用中</option>
+                                <option value="2" >下线</option>
+                            </select>
+                                <input type="hidden" id="lockstatus" name="lockstatus" value="0">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lockparam" class="col-sm-2 control-label">${msg['eq.lock.column.lockparam']}</label>
+                            <div class="col-sm-8">
+                            <input type="text" id="lockparam" class="form-control" name="lockparam" placeholder="${msg['eq.lock.column.lockparam']}">
+                            </div>
+                        </div>
+
+                        <!--机场-->
+                        <div class="form-group">
+                            <label for="airportId" class="col-sm-2 control-label">所属机场</label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <input id="airportName" type="text" class="form-control" placeholder="选择机场" disabled
+                                           value="" />
+
+                                    <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                            data-target="#dialogAirportSelect"><i class="ti-plus"></i>选择
+                                                    </button>
+			                             		</span>
+                                </div>
+                                <input type="hidden" id="airportId" name="airportId" value="<%if(!isEmpty(obj)){%>${obj.id}<%}%>">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="describ" class="col-sm-2 control-label">${msg['eq.lock.column.describ']}</label>
+                            <div class="col-sm-8">
+                                <textarea rows="3" id="describ" class="form-control" name="describ" placeholder="${msg['eq.lock.column.describ']}"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-lg-3"></div>
+                <div class="col-lg-6">
+                    <div class="form-group text-center">
+                        <label></label>
+
+                        <div>
+                            <button class="btn btn-primary btn-block btn-lg btn-parsley" data-loading-text="${msg['globals.button.submit.tip']}">${msg['globals.button.submit']}</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+<!-- 选择机场 -->
+<div id="dialogAirportSelect" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" style="width: 700px;">
+        <div class="modal-content" style="width: 700px;">
+
+            <section class="content-wrap bg-white">
+                <header class="header navbar bg-white shadow">
+                    <div class="pull-left offscreen-left" style="padding-top:15px;">
+                        <div class="form-group">
+                            <input id="name" class="form-control" type="text" onclick="this.value='';" placeholder="请输入机场名称">
+                        </div>
+                    </div>
+                    <div class="pull-right offscreen-right btn-group tool-button">
+                        <a class="btn btn-primary navbar-btn" onclick="_selectOn()">确定</a>
+                    </div>
+                </header>
+                <div class=panel-body style="padding-top: 50px;">
+                    <div class="table-responsive no-border" style="padding-top: 5px;" >
+                        <input id="unitid" type="hidden">
+                        <table id="datatable_select" class="table table-bordered table-striped mg-t datatable">
+                            <thead>
+                            <tr>
+                                <th>机场编号</th>
+                                <th>机场名称</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    //20180319zhf1808
+    var flag = true;
+    //编码校验
+    $("#locknum").blur(function () {
+        $.ajax({
+            type: "POST",
+            url: "/platform/eq/lock/getCountBylocknum",
+            data: {locknum:$("#locknum").val()},
+            beforeSend:function () {
+                $("#loading").show();
+            },
+            success: function(count){
+                if(count > 0){
+                    //已经存在
+                    $("#errImfo").show();
+                    $("#numDiv").addClass("has-error");
+                    flag = false;
+                }else{
+                    $("#errImfo").hide();
+                    $("#numDiv").removeClass("has-error");
+                    flag = true;
+                }
+            },
+            complete:function () {
+
+                $("#loading").hide();
+            }
+        });
+        return flag;
+    });
+
+    var datatable_select;
+    function initdatatable_select() {
+        datatable_select = $('#datatable_select').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "ajax": {
+                "url": "${base}/platform/base/airport/data",
+                "type": "post",
+                "data": function (d) {
+                    d.name = $("#name").val();
+                }
+            },
+            "order": [[0, "desc"]],
+            "columns": [
+                {"data": "airportnum", "bSortable": true},
+                {"data": "airportname", "bSortable": true}
+            ],
+            "columnDefs": [
+                {
+
+                }
+            ]
+        });
+        datatable_select.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#name").on('input', function () {
+            datatable_select.ajax.reload();
+        });
+    }
+
+    $(document).ready(function () {
+        initdatatable_select();
+        initAirport();
+
+        $('#addForm').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {//20180319zhf1823
+                if(!flag){
+                    $("#locknum").focus();
+                    return false;
+                }
+                form.find("button:submit").button("loading");
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    form.resetForm();
+                } else {
+                    Toast.error(data.msg);
+                }
+                form.find("button:submit").button("reset");
+            },
+            error:function(a,b,c){
+              alert(c);
+            }
+        });
+    });
+
+    function initAirport(){
+        //1. 获取当前人id
+        //2、从当前人得到所在机场
+        //3、如果没有所在机场，则获取所有机场
+        var airport=document.getElementById("air");
+        var url="${base}/platform/base/cnctobj/getUserAirport";
+        $.post(url,{},function(d){
+            if(d&&d.length>0){
+                //说明存在机场
+                for(var i=0;i<d.length;i++){
+                    var option=document.createElement("option");
+                    option.value=d[i].id;
+                    option.innerHTML=d[i].airportname;
+                    if(i==0){
+                        option.selected="selected";
+                        $("#airportId").val(d[i].id);
+                    }
+
+                    airport.appendChild(option);
+                }
+
+            }
+        });
+    }
+
+    $("#lock").on("change",function(){
+        $("#lockstatus").val($(this).val());
+    });
+
+    $("#air").on("change",function(){
+        $("#airportId").val($(this).val());
+    });
+    //20180316zhf1707
+    function _selectOn() {
+        var chks = datatable_select.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(datatable_select.rows('.selected').data(), function (i, n) {
+                ids.push(this["id"]);
+                ids.push(this["airportname"]);
+            });
+            $("#airportId").val(ids[0])
+            $("#airportName").val(ids[1])
+            $('#dialogAirportSelect').modal('hide');
+        }else{
+            Toast.warning("请先选择机场！");
+        }
+    }
+
+</script>
+<%}%>
+
+

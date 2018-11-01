@@ -1,0 +1,211 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+
+
+            <div class="col-md-8 col-sm-offset-2 text-center">
+                    <span style="font-size: 18px; line-height: 48px;" id="ptitle"></span>
+            </div>
+    <div class="pull-right offscreen-right">
+        <button class="btn btn-primary navbar-btn" onclick="sublime.toggleFilter('.cd-panel')"><i
+                class="fa fa-sliders"></i> 筛选
+        </button>
+    </div>
+    <div class="col-md-12" id="datefilter"></div>
+</header>
+
+    <div class=panel-body style="padding-top: 62px;">
+
+        <div class="table-responsive no-border">
+            <table id ="datatable" class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                <tr>
+                    <th>借用单号</th>
+                    <th>使用人员</th>
+                    <th>设备编号</th>
+                    <th>设备名称</th>
+                    <th>设备类型</th>
+                    <th>开始借用时间</th>
+                    <th>结束借用时间</th>
+                    <th>使用时长</th>
+                    <th>费用</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+<div class="cd-panel from-right">
+    <form id="selectForm">
+        <header class="cd-panel-header">
+            <h4>高级筛选</h4>
+        </header>
+        <div class="cd-panel-container">
+            <div class="cd-panel-content shadow">
+                <div class="form-group">
+                    <label for="airport">所属机场</label>
+                    <input type="text" id="airport" name="airport" readonly="readonly" value="${obj.airportname!}"  class="form-control" placeholder="所属机场" autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="units">航空公司</label>
+                    <div class="select">
+                        <select id="units">
+                            <!--<option value="" selected>请选择</option>-->
+                            <!--<option value="99" >草稿</option>-->
+                            <!--<option value="1">报修中</option>-->
+                            <!--<option value="2">维修中</option>-->
+                            <!--<option value="0">已完成</option>-->
+                        </select></div>
+                    <input type="hidden" id="unit" name="unit" value="">
+                </div>
+                <div class="form-group">
+                    <label for="starttime">统计开始时间</label>
+                    <input type="month" id="starttime" name="starttime"  value="" class="form-control" placeholder="" autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="endtime">统计结束时间</label>
+                    <input type="month" id="endtime" name="endtime"  value="" class="form-control" placeholder="">
+                </div>
+
+                <button id="searchBtn" type="button"  class="btn btn-primary" >查询</button>
+
+                <button id="resetBtn" type="button" class="btn btn-default">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    var datatable;
+    var airportname="${obj.airportname!}";
+    var unitid="${person.unitid!}";
+    $(function () {
+        bindAircorp();
+        setTimeout(function(){
+            datatable();
+            $("#ptitle").html($("#units").find("option:selected").html()+"账单明细");
+        },500);
+
+
+
+    });
+
+    function bindAircorp(){
+        //如果当前登录人有所属机场，没有所属单位，则可以看到机场内所有单位的统计信息
+
+        if(airportname.length>0){
+            var url="${base}/platform/sys/unit/getPersonUnits";
+            var param={
+                "unitid":unitid,
+                "time":Math.random(100)
+            };
+            $.post(url,param,function(d){
+                if(d){
+                    var select = document.getElementById("units");
+                    for(var i=0;i<d.length;i++){
+                        var option =document.createElement("option");
+                        option.setAttribute("value",d[i].id);
+                        option.innerHTML=d[i].name;
+                        select .appendChild(option);
+                    }
+//                    alert($("#units").children());
+                    if($("#units").children().length>0){
+                        var options = $("#units").find("option");
+                        options.attr("selected",false);
+                        options.first().attr("selected",true);
+//                        alert(options.first().attr("value"));
+                        $("#unit").val(options.first().attr("value"));
+                    }
+                }
+            });
+        }
+    }
+
+    $("#units").on("change",function(d){
+        $("#unit").val($(this).val());
+
+    });
+
+    $("#searchBtn").on("click",function(){
+        if(($("#starttime").val().length&&$("#endtime").val().length==0)||($("#starttime").val().length==0&&$("#endtime").val().length>0)){
+            Toast.error("开始统计日期和结束统计日期需同时填写");
+            return false;
+        }
+        datatable.ajax.reload();
+//        alert($("#units").find("option:selected").html());
+        $("#ptitle").html($("#units").find("option:selected").html()+"账单明细");
+        if($("#starttime").val().length>0){
+            $("#datefilter").html("统计开始时间:"+$("#starttime").val()+"&nbsp;&nbsp;&nbsp;&nbsp;统计结束时间:"+$("#endtime").val());
+        }else{
+            $("#datefilter").html("&nbsp;");
+        }
+
+    });
+
+    $("#resetBtn").on("click",function(){
+        $("#units").find("option").attr("selected",false);
+        $("#units").find("option").first().attr("selected",true);
+        $("#starttime").val("");
+        $("#endtime").val("");
+        $("#unit").val($("#units").find("option").first().attr("value"));
+        $("#ptitle").html($("#units").find("option:selected").html()+"账单明细");
+        $("#datefilter").html("&nbsp;");
+        datatable.ajax.reload();
+    });
+
+    function datatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "ajax": {
+                "url": "${base}/platform/eq/Map/getcharging_data",
+                "type": "post",
+                "data": function (d) {
+                    d.pstatus=1;
+                    d.unitid=$("#unit").val();
+                    d.starttime=$("#starttime").val();
+                    d.endtime=$("#endtime").val();
+
+                }
+            },
+            "order": [[0, "desc"]],
+            "columns": [
+                {"data": "equsenum", "bSortable": true},
+                {"data": "username", "bSortable": true},
+                {"data": "eqnum", "bSortable": true},
+                {"data": "eqname", "bSortable": true},
+                {"data": "eqtype", "bSortable": true},
+                {"data": "starttime", "bSortable": true},
+                {"data": "endtime", "bSortable": true,"render": function (data, type, row, meta) {
+                        return data == ""  || data == null || typeof data == "undefined" ? "":data;
+                    }},
+                {"data": "optime", "bSortable": true,"render": function (data, type, row, meta) {
+                        return data == ""  || data == null || typeof data == "undefined" ? "":data;
+                    }},
+                {"data": "sf", "bSortable": true,"render": function (data, type, row, meta) {
+                        return data == null || typeof data == "undefined" ? "":data;
+                    }}
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            if ($(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            } else {
+                datatable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+        $("#name").on('keyup', function () {
+            datatable.ajax.reload();
+        });
+    }
+</script>
+<%}%>

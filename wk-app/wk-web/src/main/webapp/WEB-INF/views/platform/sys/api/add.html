@@ -1,0 +1,40 @@
+ <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">添加应用</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label class="control-label">应用名称</label>
+                    <input type="text" class="form-control" name="appName" id="appName" placeholder="应用名称">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button onclick="doIt()" id="ok" type="button" class="btn btn-primary" data-loading-text="正在提交...">确 定</button>
+            </div>
+
+<script type="text/javascript">
+    function doIt() {
+        if ($("#appName").val() == "") {
+            Toast.error("应用名称不可为空");
+            $("#appName").focus();
+            return false;
+        }
+        var btn = $("#ok");
+        var dialog = $("#dialogDetail");
+        btn.button("loading");
+        $.post("${base}/platform/sys/api/addDo", {appName: $("#appName").val()}, function (data) {
+            if (data.code == 0) {
+                Toast.success("添加成功");
+                dialog.modal("hide");
+                datatable.ajax.reload();
+            } else {
+                Toast.error(data.msg);
+            }
+            btn.button("reset");
+
+        }, "json");
+    }
+</script>

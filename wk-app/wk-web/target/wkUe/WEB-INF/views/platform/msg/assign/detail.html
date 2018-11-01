@@ -1,0 +1,65 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel panel-primary no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">待办任务表</a>
+                        <small>${obj.id}</small>
+                    </div>
+                </header>
+                <div class="list-group">
+                    <table class="table table-bordered table-striped mg-t datatable">
+                        <tbody>
+                                                        <tr>
+                                <td>${msg['msg.assign.column.bizObject']}</td><td>${obj.bizObject}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.assign.column.bizObjectId']}</td><td>${obj.bizObjectId}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.assign.column.title']}</td><td>${obj.title}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.assign.column.body']}</td><td>${obj.body}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.assign.column.state']}</td><td>${obj.state}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.assign.column.endtime']}</td><td>${obj.endtime}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.assign.column.starttime']}</td><td>${obj.starttime}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.assign.column.accepttime']}</td><td>${obj.accepttime}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.assign.column.performerUserId']}</td><td>${obj.performerUserId}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.assign.column.performerPersonId']}</td><td>${obj.performerPersonId}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.assign.column.senderId']}</td><td>${obj.senderId}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.assign.column.linkUrl']}</td><td>${obj.linkUrl}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.assign.column.creater']}</td><td>${obj.creater}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.assign.column.createTime']}</td><td>${obj.createTime}</td>
+                            </tr>
+                                                    </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">${msg['globals.button.ok']}</button>
+</div>

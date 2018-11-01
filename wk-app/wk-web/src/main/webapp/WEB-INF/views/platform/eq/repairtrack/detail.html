@@ -1,0 +1,161 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/eq/repair" id="goBack" data-pjax><i class="ti-angle-left"></i> ${msg['globals.button.back']}</a>
+    </div>
+</header>
+<div class="content-wrap" >
+    <div class="wrapper" style="min-height:500px;">
+        <section class="panel panel-form" >
+            <div class="container" >
+                <div class="main">
+                    <ul class="cbp_tmtimeline" id="ul">
+
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script language="JavaScript">
+    var eqcode,eqcolor,eqfac,eqname,eqtype,equnitphone,operater,operatetime,
+        repStatus,repnum,reptext,unname,upname,imgpath,wxduty;
+    var acl="cbp_tmicon2";
+    var tel="cbp_tmlabel1";
+    var tmtime = "cbp_tmtime1";
+    var tdata,time
+    var imgtmp = ""
+
+    $(document).ready(function () {
+
+        $('#ul').html("");
+        var rpid = "${id!}";
+        console.debug(rpid)
+//        alert(sgid);
+        $.post("${base}/platform/eq/repairtrack/getEqRepairInfo", {"rpid":rpid}, function (data) {
+            console.debug(data)
+            data.forEach(function(data) {
+
+
+                if(data.eqcode){
+                    eqcode = data.eqcode
+                }else{
+                    eqcode   =""
+                }
+
+                if(data.eqcolor){
+                    eqcolor    = data.eqcolor
+                }else{
+                    eqcolor =""
+                }
+                if(data.eqfac){
+                    eqfac  = data.eqfac
+                }else{
+                    eqname   =""
+                }
+                if(data.eqname){
+                    eqname  = data.eqname
+                }else{
+                    eqname =""
+                }
+                if(data.eqtype){
+                    eqtype  = data.eqtype
+                }else{
+                    eqtype  =""
+                }
+                if(data.equnitphone){
+                    equnitphone = data.equnitphone
+                }else{
+                    equnitphone =""
+                }
+                if(data.operater){
+                    operater= data.operater
+                }else{
+                    operater =""
+                }
+                if(data.wxduty){
+                    wxduty= data.wxduty
+                }else{
+                    wxduty =""
+                }
+                 if(data.imgpath){
+                    imgpath =data.imgpath;
+                     imgtmp=imgtmp+"<img src='"+imgpath+"' class='img-rounded' data-action='zoom' style='max-height: 100px'>&nbsp;&nbsp;"
+                 }else{
+                     imgpath = ""
+                 }
+
+                if(data.operatetime){
+                    tdata= new Date(data.operatetime).format("MM/dd/yy")
+                    time=new Date(data.operatetime).format("hh:mm:ss")
+                    operatetime= data.operatetime
+                }else{
+                    operatetime  =""
+                    tdata ="未开始";
+                }
+                //状态,1报修中，2维修中，0完成，99草稿
+                if(data.repairstatus == "99"){
+                    repStatus = "草稿";
+                    acl="cbp_tmicon1";
+                    tel="cbp_tmlabel2";
+                }else if(data.repairstatus == "1"){
+                    acl="cbp_tmicon2";
+                    tel="cbp_tmlabel1";
+                    repStatus   ="报修中"
+                }else if(data.repairstatus == "2"){
+                    acl="cbp_tmicon2";
+                    tel="cbp_tmlabel1";
+                    repStatus = "维修中"
+                }else{
+                    acl="cbp_tmicon2";
+                    tel="cbp_tmlabel1";
+                    repStatus = "完成"
+                }
+
+                if(data.repnum){
+                    repnum     = data.repnum
+                }else{
+                    repnum =""
+                }
+                if(data.reptext){
+                    reptext = data.reptext
+                }else{
+                    reptext =""
+                }
+                if(data.unname){
+                    unname = data.unname
+                }else{
+                    unname =""
+                }
+
+                if(data.upname){
+                    upname = data.upname
+                }else{
+                    upname =""
+                }
+
+                var temp="<li>" +
+                    "<time class='"+tmtime+"' datetime='"+operatetime+"'><span>"+tdata+"</span><span>"+time+"</span></time>" +
+                    "<i class='"+acl+" ti-time' ></i> <div class='"+tel+"'> " +
+                    "<h2>"+repStatus+"</h2> " +
+                    "<div>操作人:&nbsp;&nbsp;&nbsp;&nbsp;"+operater+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>" +
+                    (( repStatus == "草稿" || repStatus == "报修中" || repStatus == "维修中") ?
+                        "<div>设备名称:&nbsp;&nbsp;&nbsp;&nbsp;"+eqname+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备编号:"+repnum+"</div>" +
+                        "<div>身份牌照编号:&nbsp;&nbsp;&nbsp;&nbsp;"+eqcode+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备颜色:"+eqcolor+"</div>"+
+                        "<div>厂牌型号:&nbsp;&nbsp;&nbsp;&nbsp;"+eqfac+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;规格型号:"+eqtype+"</div>"+
+                        "<div>设备所属单位:&nbsp;&nbsp;&nbsp;&nbsp;"+unname+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备所属单位联系电话:"+equnitphone+"</div>"+
+                        "<div>上报人:&nbsp;&nbsp;&nbsp;&nbsp;"+upname+"</div>"
+ +"<div>维修责任人:&nbsp;&nbsp;&nbsp;&nbsp;"+wxduty+"</div>"
+                        :"") +
+                    "<div>维修内容:&nbsp;&nbsp;&nbsp;&nbsp;"+reptext+"</div><div style='padding-top: 10px'>"+imgtmp+"</div></div></li>";
+                $('#ul').append(temp);
+            });
+        }, "json");
+
+    })
+
+</script>
+<%}%>

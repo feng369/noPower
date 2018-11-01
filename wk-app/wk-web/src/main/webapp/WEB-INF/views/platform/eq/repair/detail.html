@@ -1,0 +1,70 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">设备报修明细</a>
+                        <small>${obj.eqMateriel.eqname} [${obj.eqMateriel.eqnum}]</small>
+                    </div>
+                </header>
+                <div class="list-group">
+                    <table class="table table-bordered table-striped mg-t datatable">
+                        <tbody>
+                                                        <tr>
+                                <td>${msg['eq.repair.column.repnum']}</td><td>${obj.repnum!}</td>
+                            </tr>
+
+                                                        <tr>
+                                <td>维修内容</td><td>${obj.reptext!}</td>
+                            </tr>
+                                                        <tr>
+                                <td>上报人</td><td>${obj.sysUser.username!}</td>
+                            </tr>
+                                                        <tr>
+                                <td>图片</td><td><div class="col-sm-8" id="imgpath">
+
+                                                        </div>
+
+                                                        </td>
+                            </tr>
+                                                        <!--<tr>-->
+                                <!--<td>${msg['eq.repair.column.imgpath']}</td><td>${obj.imgpath}</td>-->
+                            <!--</tr>-->
+                                                        <!--<tr>-->
+                                <!--<td>${msg['eq.repair.column.imgname']}</td><td>${obj.imgname}</td>-->
+                            <!--</tr>-->
+                                                        <!--<tr>-->
+                                <!--<td>${msg['eq.repair.column.oldimgname']}</td><td>${obj.oldimgname}</td>-->
+                            <!--</tr>-->
+                                                        <tr>
+                                <td>${msg['eq.repair.column.pstatus']}</td><td><%if(obj.pstatus=='0'){%>已完成<%}else if(obj.pstatus=='1'){%>报修中<%}else if(obj.pstatus=='2'){%>维修中<%}else{%>草稿<%}%></td>
+                            </tr>
+                                                        <tr>
+                                                            <td>${msg['eq.repair.column.wxuserid']}</td><td>${obj.wxUser.username!}</td>
+                                                        </tr>
+                                                    </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">${msg['globals.button.ok']}</button>
+</div>
+<script language="JavaScript">
+    $(document).ready(function () {
+    var pic = "${obj.imgpath}";
+    var imgtmp="";
+    if(typeof(pic) !="undefined" && pic!=""){
+    var img=new Array();
+    img=pic.split(',');
+    img.forEach(function(data) {
+    imgtmp=imgtmp+"<img src='"+data+"' class='img-rounded' data-action='zoom' style='max-height: 100px'>&nbsp;&nbsp;"
+    })
+
+    $('#imgpath').html(imgtmp)
+    }
+    });
+</script>

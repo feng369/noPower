@@ -1,0 +1,1009 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<link rel="stylesheet" href="${base!}/assets/plugins/bvcloud/home.css">
+<style>
+    body, ul, ol, li, p, h1, h2, h3, h4, h5, h6, form, fieldset, table, td, th, img, div, dl, dt, dd, input, pre, form, textarea, blockquote {
+        margin: 0;
+        padding: 0;
+    }
+
+    img {
+        border: none;
+    }
+
+    li {
+        list-style: none;
+    }
+
+    input, select, textarea, button {
+        outline: none;
+    }
+
+    textarea: {
+        resize: none;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    /*清浮动*/
+    .clearfix:after {
+        content: "";
+        display: block;
+        clear: both;
+    }
+
+    .clearfix {
+        zoom: 1;
+    }
+
+    button {
+        border: none;
+        cursor: pointer;
+    }
+
+    /*body, html {*/
+        /*width: 100%;*/
+        /*height: 100%;*/
+        /*font-family: 'PingFang', '苹方', 'Microsoft Yahei', '微软雅黑';*/
+    /*}*/
+
+    .jiwei1,
+        /*
+        .j1 li:after,*/
+    .j1:after,
+    .menu_bottom ul .j1:before {
+        background-color: #D0021B;
+    }
+
+    .jiwei2,
+        /*.j2 ul li:after,*/
+    .j2:after,
+    .menu_bottom ul .j2:before {
+        background-color: #7ED321;
+    }
+
+    .jiwei3,
+        /*.j3 ul li:after,*/
+    .j3:after,
+    .menu_bottom ul .j3:before {
+        background-color: #4A90E2;
+    }
+
+    .jiwei4,
+        /*.j3 ul li:after,*/
+    .j4:after,
+    .menu_bottom ul .j4:before {
+        background-color: #FFCC33;
+    }
+
+    .jb {
+        font-size: 14px;
+        font-weight: normal;
+        position: relative;
+        line-height: 30px;
+        border-left: 30px #4A4A4A solid;
+        padding: 0 10px;
+        display: inline-block;
+        height: 30px;
+        color: #ffffff;
+        box-shadow: 0 5px 11px rgba(0, 0, 0, .1);
+        margin: 0;
+    }
+
+    .jb:before {
+        content: "";
+        width: 20px;
+        height: 20px;
+        margin: 5px;
+        position: absolute;
+        left: -30px;
+        top: 0;
+        background: #4A4A4A url(/assets/img/home_note/jiwei@3x.png) center center no-repeat;
+        background-size: contain;
+    }
+
+    #maps {
+        position: absolute;
+        top:0;
+        right:0;
+        bottom:0;
+        left:0;
+        margin:0 auto;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 1;
+    }
+    .leftside {
+        position: absolute;
+        bottom:40px;
+        left:16px;
+        background-color: #fff;
+        border-radius: 2px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, .1);
+        width: 46px;
+        z-index: 1;
+    }
+    .rightside {
+        position: fixed;
+        /*width: 20%;*/
+        height: 100%;
+        background-color: #fff;
+        box-shadow: -2px 7px 7px rgba(0, 0, 0, .15);
+        right: 0;
+        /*201805021633*/
+        top: 51px;
+        border-top:1px solid #ebebeb;
+        overflow-y: auto;
+        z-index: 2;
+        cursor: pointer;
+    }
+
+    .menu_bottom {
+        position: fixed;
+        z-index: 2;
+        width: 330px;
+        height: 45px;
+        display: block;
+        background-color: #fff;
+        box-shadow: 0 -5px 7px rgba(0, 0, 0, .10);
+        right: 0;
+        bottom: 0;
+    }
+
+    .menu_bottom ul li {
+        display: inline-block;
+        margin: 14px 0px 14px 15px;
+        font-size: 12px;
+        color: #9B9B9B;
+        padding-left: 26px;
+        position: relative;
+    }
+
+    .menu_bottom ul li:before {
+        content: "";
+        width: 12px;
+        height: 12px;
+        position: absolute;
+        left: 3px;
+        top: 3px;
+    }
+
+    .accordion {
+        background-color: #fff;
+        color: #fff;
+        cursor: pointer;
+        width: 100%;
+        border-bottom: 1px #F1F1F1 solid;
+        text-align: left;
+        outline: none;
+        font-size: 14px;
+        transition: 0.4s;
+        position: relative;
+    }
+
+    /*.panel:last-child {*/
+        /*margin-bottom: 60px*/
+    /*}*/
+
+    .accordion .jb {
+        display: block;
+        margin: 15px;
+        box-shadow: none;
+        font-weight: normal;
+    }
+
+    .accordion.active, .accordion:hover {
+        box-shadow: 0px 5px 7px rgba(230, 230, 230, 100);
+    }
+
+    .accordion:after {
+        content: "";
+        position: absolute;
+        /*background: url(/assets/img/home_note/add_tx@3x.png) center no-repeat;*/
+        background-size: contain;
+        width: 10px;
+        height: 10px;
+        top: 9px;
+        right: 30px;
+    }
+
+    .accordion.active:after {
+        content: "";
+        position: absolute;
+        /*background: url(/assets/img/home_note/del_tx@3x.png) center no-repeat;*/
+        background-size: contain;
+        width: 10px;
+        height: 10px;
+        top: 9px;
+        right: 30px;
+    }
+
+    .panel {
+        padding: 0 15px;
+        background-color: #fff;
+        max-height: 500px;
+        overflow: hidden;
+        transition: 0.6s ease-in-out;
+        opacity: 1;
+    }
+
+    .panel.show {
+        opacity: 0;
+        max-height: 0px;
+    }
+
+    .panel ul li {
+        background-color: #ebebeb;
+        margin: 12px 0;
+        padding: 4px 50px 4px 12px;
+        color: #333;
+        text-align: left;
+        position: relative;
+    }
+
+    .panel ul li:after {
+        content: "";
+        width: 12px;
+        height: 12px;
+        position: absolute;
+        right: 15px;
+        top: 20px;
+    }
+
+    .panel ul li p,
+    .panel ul li span {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .panel ul li:last-child {
+        margin-bottom: 0;
+    }
+
+    .panel ul li span {
+        font-size: 12px;
+        color: #9B9B9B;
+    }
+
+       /*.jb {*/
+           /*font-family: 'PingFang', '苹方', 'Microsoft Yahei', '微软雅黑';*/
+           /*font-size: 14px;*/
+           /*font-weight: bold;*/
+           /*position: relative;*/
+           /*line-height: 30px;*/
+           /*border-left: 30px #4A4A4A solid;*/
+           /*padding: 0 10px 0 10px;*/
+           /*display: inline-block;*/
+           /*height: 30px;*/
+           /*color: #ffffff;*/
+           /*box-shadow: 0 5px 11px rgba(0, 0, 0, .1);*/
+       /*}*/
+
+
+
+    /*.jb:before {*/
+        /*content: "";*/
+        /*width: 20px;*/
+        /*height: 20px;*/
+        /*margin: 5px;*/
+        /*position: absolute;*/
+        /*left: -30px;*/
+        /*top: 0;*/
+        /*background: #4A4A4A url("../../../../assets/img/bvcloud/jiwei/jiwei.png") center center no-repeat;*/
+        /*background-size: contain;*/
+    /*}*/
+
+
+    .jiweibox {
+        list-style: none;
+        position: absolute;
+        top:16px;
+        left: 80px;
+        z-index: 2;
+        background-color: #fff;
+        border-radius: 2px;
+        padding: 9px 4px 7px 22px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, .1);
+    }
+
+    .jiweibox li {
+        display: inline-block;
+        margin: 0 20px;
+        position: relative;
+        cursor: pointer;
+        line-height: 18px;
+        height: 22px;
+        color: #888;
+        font-weight: normal;
+        font-size: 13px;
+        transition: all 0.3s;
+        font-family:'PingFang','苹方','Microsoft Yahei','微软雅黑';
+    }
+    .jiweibox li:hover {
+        color: #132F56;
+    }
+    .jiweibox .active {
+        color: #132F56;
+        border-bottom: #132F56 solid 2px ;
+    }
+
+    .b1, .b2, .b3,.b4 {
+        width: 10px;
+        height: 10px;
+        display: block;
+        position: absolute;
+        left: -20px;
+        top: 4px;
+    }
+
+    .b1 {
+        background-color: #D0021B;
+    }
+
+    .b2 {
+        background-color: #7ED321;
+    }
+
+    .b3 {
+        background-color: #4A90E2;
+    }
+    .b4 {
+        background-color: #FFCC33;
+    }
+    .icon-weixing,.icon-3d{font-size:20px;}
+    .icon-yujing{font-size:32px; position: relative}
+    .icon-yujing span{
+        position: absolute;
+        right:-4px;
+        top:-6px;
+        background-color:#D0021B ;
+        color: #fff;
+        padding: 4px;
+        border-radius: 10px;
+        min-width: 20px;
+        line-height: 11px;
+        font-size: 11px;
+        opacity:0.9;
+        filter: alpha(opacity=90);
+    }
+    #msgInfo{
+        position: fixed;
+        width: 30px;
+        height:50px;
+        padding: 15px 5px 15px 5px;
+        background-color: #fff;
+        right: 0%;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+        cursor: pointer;
+        text-align: center;
+        color: #666;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, .1);
+    }
+    #msgInfo p{ position: relative;}
+    #msgInfo p span{
+        position: absolute;
+        right:-16px;
+        top:-12px;
+    }
+</style>
+<div id="dialogSeat" class="modal fade bs-modal-lg" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+
+            <section class="content-wrap bg-white">
+                <header class="header navbar bg-white shadow">
+                    <div class="pull-left offscreen-left" style="padding-top:8px; padding-bottom: 0px">
+                        <div class="form-group">
+                            <a href="javascript:;" class="h4 show no-m pt5" id="seatTitle"></a>
+                        </div>
+                    </div>
+                </header>
+                <div class=panel-body style="padding-top: 50px;">
+                    <div class="table-responsive no-border" style="padding-top: 5px;">
+                        <table id="datatable_select" class="table table-bordered table-striped mg-t datatable">
+                            <thead>
+                            <tr>
+                                <th>桩位编号</th>
+                                <th>设备编号</th>
+                                <th>设备名称</th>
+                                <th width="30">状态</th>
+                                <th>状态说明</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid" id="maps_wrap" >
+
+    <div id="maps">
+        <div id="msgInfo">
+            <!--<i class="iconfont icon-yujing"><span>2</span></i>-->
+            <span id="msgSpan" > < </span>
+
+        </div>
+        <ul class=" jiweibox">
+        <li class="btn_borrow" data-borrow="1"><span class="b3"></span>未借用</li>
+        <!--<li class="btn_borrow" data-borrow="noBorrow"><span class="b3"></span>未借用</li>-->
+        <li class="btn_borrow" data-borrow="2"><span class="b2"></span>正在借用</li>
+        <!--<li class="btn_borrow" data-borrow="borrowing"><span class="b2"></span>正在借用</li>-->
+        <li class="btn_borrow" data-borrow="4"><span class="b4"></span>设备预警</li>
+        <li class="btn_borrow" data-borrow="3"><span class="b1"></span>设备异常</li>
+        <!--<li class="btn_borrow" data-borrow="error"><span class="b1"></span>设备异常</li>-->
+        </ul>
+        <div class="leftside">
+            <ul class="map_skins">
+                <li class="open_btn iconfont icon-quanping1" onclick="openNav()" id="open_btn" style="display: block;">
+                    <p>放大</p></li>
+                <li class=" close_btn iconfont icon-quxiaoquanping" onclick="closeNav()" id="close_btn" style="display: none;"><p>缩小</p></li>
+                <li class="iconfont icon-weixing"  onclick="changeMapType('Satellite')" >
+                    <p>卫星</p></li>
+                <li class="iconfont icon-3d" onclick="changeMapType('Buildings')">
+                    <p>三维</p></li>
+            </ul>
+        </div>
+        <div id="rightside" class="rightside">
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+<script>
+    function openNav() {
+        document.getElementById("maps_wrap").style.height = "100%";
+        document.getElementById("maps_wrap").style.width = "100%";
+        document.getElementById("maps_wrap").style.position = "fixed";
+        document.getElementById("maps_wrap").style.zIndex = "1000";
+        document.getElementById("maps_wrap").style.backgroundColor = "rgba(0,0,0, 0.8)";
+        document.getElementById("maps_wrap").style.transition = "0.3s";
+        document.getElementById("maps_wrap").style.top = "0";
+        document.getElementById("maps_wrap").style.left = "0";
+        document.getElementById("rightside").style.top = "0";
+        document.getElementById("close_btn").style.display = "block";
+        document.getElementById("open_btn").style.display = "none";
+    }
+
+    function closeNav() {
+        document.getElementById("maps_wrap").style.height = "";
+        document.getElementById("maps_wrap").style.width = "";
+        document.getElementById("maps_wrap").style.position = "";
+        document.getElementById("maps_wrap").style.zIndex = "";
+        document.getElementById("maps_wrap").style.backgroundColor = "";
+        document.getElementById("maps_wrap").style.transition = "0.3s";
+        document.getElementById("maps_wrap").style.top = "";
+        document.getElementById("maps_wrap").style.left = "";
+        document.getElementById("rightside").style.top = "51px";
+        document.getElementById("open_btn").style.display = "block";
+        document.getElementById("close_btn").style.display = "none";
+    }
+</script>
+<script src="http://webapi.amap.com/maps?v=1.4.4&key=df68ff4e73de1352da612944f84b7d42&callback=initMapzw"></script>
+<script>
+    //20180502zhf1147
+    $(function () {
+        getRightInfo();
+        $("#dialogSeat").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+    });
+
+    function getMarkerInfo(markerId, borrow) {
+        //异常
+        $.post("${base}/platform/eq/planeseat/getPlaneSeatByAirport", {
+            airportid: airportid,
+            seatId: markerId,
+            borrow: borrow
+        }, function (data) {
+            var textHtml;
+            data.forEach(function (data) {
+
+                var seatId;
+                if (data) {
+                    var arrplace = data.position.split(",");
+                    seatId = data.id;
+
+                    if (data.status === "3") {
+                        textHtml = '<div class="jb jiwei1">' + data.seatnum + '</div>'
+                        //异常
+                        /*$(".rightside").append('<div class="accordion active"><div class="jb jiwei' + 1 + '">' + data.seatnum + '机位</div> </div><div class="panel "><ul class="j1">'+errHtml+'</ul><ul class="j2">'+borrowingHtml+'</ul><ul class="j3">'+noBorrowHtml+'</ul></div>');*/
+                    } else if (data.status === "2") {
+                        textHtml = '<div class="jb jiwei2">' + data.seatnum + '</div>'
+                        //有设备借用
+                        /* $(".rightside").append('<div class="accordion active"><div class="jb jiwei' + 2 + '">' + data.seatnum + '机位</div> </div><div class="panel "><ul class="j1">'+errHtml+'</ul><ul class="j2">'+borrowingHtml+'</ul><ul class="j3">'+noBorrowHtml+'</ul></div>');*/
+                    } else if (data.status === "1") {
+                        textHtml = '<div class="jb jiwei3">' + data.seatnum + '</div>'
+                        //机位无设备借用
+                        /*
+                        $(".rightside").append('<div class="accordion active"><div class="jb jiwei' + 3 + '">' + data.seatnum + '机位</div> </div><div class="panel "><ul class="j1">'+errHtml+'</ul><ul class="j2">'+borrowingHtml+'</ul><ul class="j3">'+noBorrowHtml+'</ul></div>');
+                        * */
+                    }else if(data.status === "4"){
+                        textHtml = '<div class="jb jiwei4">' + data.seatnum + '</div>'
+                    }else{
+                        textHtml = '';
+                        $(".rightside").append("")
+                    }
+                    var marker = new AMap.Marker({
+                        map: map,
+                        position: [arrplace[0], arrplace[1]],
+                        content: textHtml,  //自定义点标记覆盖物内容
+                    });
+                    markerZindex(data.status,marker);
+                    var obj = {}
+                    obj["seatid"] = seatId;
+                    obj["marker"] = marker;
+                    seatMarkers.push(obj)
+
+                    var seatnum = data.seatnum;
+                    AMap.event.addListener(marker, 'click', function () {
+                        var content = this.F.content;//等同于this.getContent()
+                        var cls = $(content).attr("class")
+                        $("#seatTitle").html("<div class='"+cls+"'>"+seatnum +"机位" + "</div>");
+                            initDatatable(seatId);
+                        //弹出模态框
+                        $("#dialogSeat").modal("show");
+                    });
+                }
+            });
+        });
+    }
+
+    function getRightInfo(markerId, borrow) {
+        $(".rightside").html("");
+        $.ajaxSetup({async: false});
+
+        $.post("${base!}/platform/eq/use/getEqUseList",{ seatList:"",  airportid:airportid },function(data){
+            if(data.length>0){
+                $(".rightside").animate({ width:'20%' });
+
+                $("#msgInfo").children("span:first-child").html(">");
+                $("#msgInfo").animate({right:'20%'});
+            }
+            data.forEach(function(d){
+                structElement(d,true);
+            });
+
+        });
+    }
+    var number=0;
+    var _data;
+    //构建元素节点
+    function structElement(d,needck){
+        //0.checkSeatIsExist
+        if(needck==true)
+            checkSeat(d);
+        else
+            createSeat(d);
+    }
+    //检查是否存在机位
+    function checkSeat(d){
+        // alert(d.seatnum);
+        if($(".rightside").children().length>0){
+            if($(".rightside").children("div#tdiv"+d.seatid).length>0){//说明存在此机位
+                createMateriel(d);
+            }else{
+                createSeat(d);
+            }
+        }else{
+            createSeat(d);
+        }
+
+    }
+    //构建机位元素
+    function createSeat(d) {
+        //1. createSeat
+        var tdiv=document.createElement("div");
+        tdiv.setAttribute("id","tdiv"+d.seatid);
+        var accordDiv=document.createElement("div");
+        accordDiv.setAttribute("id","adiv"+d.seatnum);
+        accordDiv.setAttribute("class","accordion");
+        var jiweiDiv=document.createElement("div");
+        jiweiDiv.setAttribute("id","jdiv"+d.seatnum);
+        jiweiDiv.setAttribute("class","jb jiwei4");
+        jiweiDiv.innerHTML=d.seatname;
+        var panelDiv=document.createElement("div");
+        panelDiv.setAttribute("id","pdiv"+d.seatnum);
+        panelDiv.setAttribute("class","panel");
+        var eqUl=document.createElement("ul");
+        eqUl.setAttribute("id","equl"+d.seatnum);
+        accordDiv.appendChild(jiweiDiv);
+        panelDiv.appendChild(eqUl);
+        tdiv.appendChild(accordDiv);
+        tdiv.appendChild(panelDiv);
+
+        $(".rightside").prepend(tdiv);
+
+        createMateriel(d);
+
+    }
+    //构建设备元素
+    function  createMateriel(d){
+
+        var li = document.createElement("li");
+        if(d.msg=="err"){
+            li.setAttribute("class","j1");
+            if($("#jdiv"+d.seatnum).attr("class")=="jb jiwei4"){
+                $("#jdiv"+d.seatnum).attr("class","jb jiwei1");
+            }
+        }else if(d.msg=="warn"){
+            li.setAttribute("class","j4");
+        }
+        var p=document.createElement("p");
+        p.innerHTML=d.eqname;
+        var span=document.createElement("span");
+        span.innerHTML=d.eqnum;
+        li.appendChild(p);
+        li.appendChild(span);
+
+        $("#equl"+d.seatnum).append(li);
+    }
+
+    function activeAccordion() {
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+        for (i = 0; i < acc.length; i++) {
+            acc[i].onclick = function () {
+                this.classList.toggle("active");
+                this.nextElementSibling.classList.toggle("show");
+            }
+        }
+    }
+    var borrow;
+    //201805408zhf2200
+    // var borrowFlag = false;
+    $(".btn_borrow").click(function () {
+        $(".btn_borrow").removeClass("active");
+        $(this).addClass("active");
+        borrow = $(this).data("borrow");
+        var markers = $.map(seatMarkers, function (ele) {
+            return ele.marker;
+        })
+        map.remove(markers)
+        getMarkerInfo(null, borrow);
+        // getRightInfo(null,null);
+    });
+
+    // var datatable;
+    var seatMarkers = [];
+    var map;
+    var position = "${obj.position!}";
+    var airportid = "${obj.id!}";
+    var arr = new Array();
+    arr = position.split(",");
+
+    var imageLayer = new AMap.ImageLayer({
+        url: '${base!}/assets/img/bvcloud/airport/kmcs.svg',
+        bounds: new AMap.Bounds(
+            [102.89565059017658,25.070235490720055],   //左下角
+            [102.971009934659,25.13404697671357]    //右上角
+        ),
+        zooms: [3, 18]
+    });
+
+
+    function initMapzw(borrow) {
+        map = new AMap.Map('maps', {
+            resizeEnable: true,
+            center: [arr[0], arr[1]],
+            rotateEnable: true,
+            zoom: 16,
+            // mapStyle: '',//样式URL
+            //     viewMode: '3D',
+            //     pitch: 10
+            layers: [
+                new AMap.TileLayer(),
+                imageLayer
+            ]
+        });
+
+        //为地图注册click事件获取鼠标点击出的经纬度坐标
+            var clickEventListener = map.on('click', function(e) {
+                      // alert(e.lnglat.getLng() + ',' + e.lnglat.getLat())
+                 });
+
+        map.setRotation(52);
+        // map.plugin(["AMap.ToolBar"], function () {//切换卫星地图按钮插件 ,"AMap.MapType"
+        //     map.addControl(new AMap.ToolBar());
+        //     // map.addControl(new AMap.MapType({defaultType:0})); //defaultType 0:2D  1:卫星图   ,showRoad:true
+        // });
+        map.on('click', function () {
+            // closeInfoWindow();
+        });
+        map.on('complete', function () {
+            getMarkerInfo(null, borrow);
+        });
+
+        //设置地图显示样式
+        // var mapStyle = "${MapStyle}";
+        // map.setMapStyle('amap://styles/' + mapStyle);
+        //设置地图上显示的元素种类，支持bg（地图背景）、point（兴趣点）、road（道路）、building（建筑物）
+        // map.setFeatures(["bg","building"]);
+        //自定义地图
+        map.setMapStyle('amap://styles/b0b25258be388f508e954755076df563');
+
+        // //默认设置卫星地图
+        // changeMapType("Satellite");
+    }
+
+    var buildingLayer = new AMap.Buildings(); //实例化3D地图图层
+    var satellLayer = new AMap.TileLayer.Satellite({zIndex: 10}); //实例化卫星图
+    // var trafficLayer = new AMap.TileLayer.Traffic({zIndex:10}); //实时路况图层
+    // var roadNetLayer = new AMap.TileLayer.RoadNet({zIndex:10}); //实例化路网图层
+    function changeMapType(type) {
+        if (type == "Satellite") {
+            addsatellLayer();
+        } else if (type == "Buildings") {
+            addBuildingLayer();
+        }
+    }
+
+    function addBuildingLayer() {   //3D网
+        buildingLayer.setMap(map); //在map中添加3D图层
+        satellLayer.setMap(null);   //隐藏卫星图
+        map.setZoom(15.5);
+    }
+
+    function addsatellLayer() {
+        satellLayer.setMap(map); //在map中添加卫星图
+        buildingLayer.setMap(null);
+        map.setZoom(15.5);
+    }
+
+
+    function refreshMarkerInfo(seatList) {
+        var textHtml = "";
+        $.ajaxSetup({async: false});
+        $.post("${base}/platform/eq/planeseat/getMarkerBySeatList", {seatList: seatList.toString(),airportid: airportid,borrow:borrow}, function (data) {
+            data.forEach(function (data) {
+                $.each(seatMarkers, function (index, ele) {
+                    if (ele.seatid == data.id) {
+                        map.remove(ele.marker)
+                    }
+                });
+                if (data.status === "3") {
+                    textHtml = '<div class="jb jiwei1">' + data.seatnum + '</div>';
+                    //异常
+                } else if (data.status === "2") {
+                    textHtml = '<div class="jb jiwei2">' + data.seatnum + '</div>';
+                    //有设备借用
+                } else if (data.status === "1") {
+                    textHtml = '<div class="jb jiwei3">' + data.seatnum + '</div>';
+                    //机位无设备借用
+                }else if(data.status === "4"){
+                    textHtml = '<div class="jb jiwei4">' + data.seatnum + '</div>'
+                } else {
+                    textHtml = '';
+                }
+                var arrplace = data.position.split(",");
+                var marker = new AMap.Marker({
+                    map: map,
+                    position: [arrplace[0], arrplace[1]],
+                    content: textHtml,  //自定义点标记覆盖物内容
+                });
+                markerZindex(data.status,marker);
+                var seatId = data.id;
+                var obj = {}
+                obj["seatid"] = seatId;
+                obj["marker"] = marker;
+                seatMarkers.push(obj)
+                var seatnum = data.seatnum;
+                AMap.event.addListener(marker, 'click', function () {
+                    var content = this.F.content;//等同于this.getContent()
+                    var cls = $(content).attr("class")
+                    $("#seatTitle").html("<div class='"+cls+"'>"+seatnum +"机位" + "</div>");
+                    initDatatable(seatId);
+                    //弹出模态框
+                    $("#dialogSeat").modal("show");
+                });
+            });
+        });
+
+    }
+    //marker层级显示
+    function markerZindex(status,marker) {
+        if (status === "3") {
+            marker.setzIndex(103)
+        } else if (status === "4") {
+            marker.setzIndex(102)
+        }else if(status === "2"){
+            marker.setzIndex(101)
+        }
+    }
+
+
+    function refresh(enName) {
+        map.setMapStyle('amap://styles/' + enName);
+    }
+
+    function initDatatable(seatId) {
+        $('#datatable_select').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching": false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "destroy":true,
+            "bInfo": true,//是否显示页数信息
+            "paging": true,
+            "scrollY": "220px",
+            "language": {
+                "url": "${base}/assets/plugins/datatables/${lang}.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base!}/platform/eq/use/getEqUseListForDataTable",
+                "type": "post",
+                "data": function (d) {
+                    d.seatId = seatId;
+                }
+            },
+            "order":[[1, "asc"]],
+            "columns": [
+                {
+                    "data": "stakenum", "bSortable": true, "render": function (data, type, row, meta) {
+                        return data?data:""
+                    }
+                },
+                {
+                    "data": "eqnum", "bSortable": true, "render": function (data, type, row, meta) {
+                       return data?data:""
+                    }
+                },
+                {
+                    "data": "eqname", "bSortable": true, "render": function (data, type, row, meta) {
+                        return data?data:"";
+                    }
+                },
+                {
+                    "data": "pstatus", "bSortable": true, "render": function (data, type, row, meta) {
+                        return getEqUseStstus(data,row.bizstatus,row.errstatus);
+                    }
+                },
+                {
+                    "data": "errstatus", "bSortable": true, "render": function (data, type, row, meta) {
+                        return getErrorStatus(data,row.bizstatus,row.pstatus) ;
+                    }
+                }
+
+            ]
+        });
+    }
+
+    function getEqUseStstus(pstatus,bizstatus,errstatus) {
+        if(bizstatus==1 ||bizstatus==2 ||errstatus==3||errstatus==4){//异常色
+            return "<i class='fa fa-circle text-danger ml5'></i>";
+        }else if(errstatus==1||errstatus==2){//预警色
+            return "<i class='fa fa-circle text-warning ml5'></i>";
+        }
+
+        if(pstatus == 0){//正常空闲中
+            return "<i class='fa fa-circle text-primary ml5'></i>";
+        }else if(pstatus ==1){//正常借用中
+            return "<i class='fa fa-circle text-success ml5'></i>";
+        }else {
+            return "";
+        }
+    }
+    function getErrorStatus(errstatus,bizstatus,pstatus) {
+        if(bizstatus==1){//异常色
+            return "<span style='color: #D0021B'>设备报修中</span>";
+        }else if(bizstatus==2){//异常色
+            return "<span style='color: #D0021B'>设备维修中</span>";
+        }else if(errstatus==3){//异常色
+            return "<span style='color: #D0021B'>开关状态异常</span>";
+        }else if(errstatus==4){//异常色
+            return "<span style='color: #D0021B'>设备信号失联</span>";
+        }else if(errstatus==1){//预警色
+            return "<span style='color: #FFCC33'>电量不足</span>";
+        }else if(errstatus==2){//预警色
+            return "<span style='color: #FFCC33'>借用超时</span>";
+        }
+
+        if(pstatus == 0){//正常空闲中
+            return "<span style='color: #4A90E2'>空闲中</span>";
+        }else if(pstatus ==1){//正常借用中
+            return "<span style='color: #7ED321'>借用中</span>";
+        }else {
+            return "";
+        }
+    }
+
+    $("#msgInfo").on("click",function(e){
+        if($(".rightside").css("width")!='0px'){
+            var width=$(".rightside").css("width");
+            $(".rightside").css("overflow-y","visible");
+            $(".rightside").animate({width:'0%'});
+            $("#msgInfo").find("span").html("<");
+            $("#msgInfo").animate({right:'0px'});
+        }else{
+            $(".rightside").css("overflow-y","auto");
+            $(".rightside").animate({width:'20%'});
+            $("#msgInfo").find("span").html(">");
+            $("#msgInfo").animate({right:'20%'});
+        }
+    });
+
+
+
+    // var seatList = [];
+    var ws;
+    $(function () {
+        // 首先,需要创建一个WebSocket连接
+        var WS_URL = window.location.host + "/websocket"
+        // 如果页面是https,那么必须走wss协议, 否则走ws协议
+        if (location.protocol == 'http:') {
+            ws = new WebSocket("ws://" + WS_URL);
+        } else {
+            ws = new WebSocket("wss://" + WS_URL);
+        }
+// 连接成功后,会触发onopen回调
+        ws.onopen = function (event) {
+            console.log("websocket onopen ...");
+            // 加入"home-机场id" 房间
+            ws.send(JSON.stringify({room: 'home-' + airportid, "action": "join"}));
+        };
+        // 收到服务器发来的信息时触发的回调
+        ws.onmessage = function (event) {
+            console.log("websocket onmessage", event.data);
+            var re = JSON.parse(event.data);
+            if (re.action == "notify") {
+                // 弹个浏览器通知
+                var seatList = re.msg;
+                refreshMarkerInfo(seatList);
+                //此方法换成得到的机位及设备id，再去到报警框新增设备 cw180509
+                // getRightInfo(null, null);
+                getErrorElement(seatList);
+            }
+        };
+        setInterval("ws_ping()", 25000); // 25秒一次就可以了
+    });
+
+    function getErrorElement(seatList){
+        //1. 查找是否存在seatid，如果存在，则remove，
+        //2、 post方法查询并preappend
+        $.each(seatList,function(i,val){
+            if($(".rightside").children("div#tdiv"+val).length>0){//存在
+                $(".rightside").children("div#tdiv"+val).remove();
+            }
+        });
+        $.post("${base!}/platform/eq/use/getEqUseList",{ seatList:seatList.toString(),  airportid:airportid },function(data){
+            if(data.length>0){
+                $(".rightside").animate({ width:'20%' });
+                $("#msgInfo").animate({right:'20%'});
+            }
+            data.forEach(function(d){
+                structElement(d,false);
+            });
+
+        });
+
+
+
+
+    }
+
+    // 定时发个空消息,避免服务器断开连接
+    function ws_ping() {
+        if (ws) {
+            ws.send("{}"); // TODO 断线重连.
+        }
+    }
+</script>
+
+
+<%}%>

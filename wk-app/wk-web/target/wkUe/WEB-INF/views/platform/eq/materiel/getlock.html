@@ -1,0 +1,119 @@
+<section class="content-wrap bg-white" style="height: 500px;">
+    <header class="header navbar bg-white shadow">
+        <div class="pull-left offscreen-left" style="padding-top:15px;">
+            <div class="form-group">
+                <input id="locknum" type="text" class="form-control" onclick="this.value='';" placeholder="请输入锁号">
+            </div>
+        </div>
+        <div class="pull-right offscreen-right btn-group tool-button" style="margin-top: 6px">
+            <a class="btn btn-primary navbar-btn" onclick="_selectOn()">确定</a>
+        </div>
+    </header>
+    <div class=panel-body style="padding-top: 50px;">
+        <div class="table-responsive no-border" style="padding-top: 5px;" >
+            <input id="unitid" type="hidden">
+            <table id="datatable_select" class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                <tr>
+                    <th>锁号</th>
+                    <th>状态</th>
+                    <th>机场</th>
+
+            </table>
+        </div>
+    </div>
+</section>
+<script language="JavaScript">
+    var datatable_select;
+    function initdatatable_select() {
+        datatable_select = $('#datatable_select').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "ajax": {
+                "url": "${base}/platform/eq/lock/getLockbyParam",
+                "type": "post",
+                "data": function (d) {
+                    d.lockstatus="0" //只显示未绑定的智能锁
+                    d.locknum = $("#locknum").val();
+                }
+            },
+            "order": [[0, "desc"]],
+            "columns": [
+                {"data": "locknum", "bSortable": true},
+                {"data": "lockstatus", "bSortable": true,"render":function(data, type, row, meta){
+                    data = data || "";
+                    if(data == ""){return "";}else{
+                        if(data=="0")
+                            return "空闲";
+                        if(data=="1")
+                            return "使用中";
+                        if(data=="2")
+                            return "下线";
+                        return data;}
+                }},
+                {"data": "airport.airportname", "bSortable": true}
+            ],
+            "columnDefs": [
+                {
+
+                }
+            ]
+        });
+        datatable_select.on('click', 'tr', function () {
+            if ($(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            } else {
+                datatable_select.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+        $("#locknum").on('keyup', function () {
+            datatable_select.ajax.reload();
+        });
+    }
+    function _selectAll() {
+        $("#datatable_select").find("tr").each(function () {
+            if (!$(this).hasClass('selected'))
+                $(this).addClass('selected');
+        });
+    }
+    function _selectOn() {
+        var chks = datatable_select.rows('.selected').data();
+        if (chks.length > 0) {
+//            alert(chks[0].id);
+            //将锁号和ID号绑定到设备上
+            var url="${base}/platform/eq/materiel/updateLockinfo";
+            $.post(url,{"mid":materielid,"lnum":chks[0].locknum,"lid":chks[0].id},function(data){
+                if (data.code == 0) {
+                    Toast.success("智能锁分配完成");
+                    datatable.ajax.reload();
+                    $('#lockDetail').modal('hide');
+                }else {
+                    Toast.error(data.msg);
+                }
+            });
+
+//            var ids = [];
+//            $.each(datatable_select.rows('.selected').data(), function (i, n) {
+//                ids.push(n.id);
+//            });
+//            $('#addForm #airportId',window.opener.document).val(ids);
+//            $('#dialogAirportSelect').modal('hide');
+        }else{
+            Toast.warning("请先选择智能锁！");
+        }
+    }
+    var materielid="";
+    $(document).ready(function () {
+        materielid="${obj.id}";
+        initdatatable_select();
+    });
+
+</script>

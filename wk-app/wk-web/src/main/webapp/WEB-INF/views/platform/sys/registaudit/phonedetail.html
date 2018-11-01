@@ -1,0 +1,303 @@
+<!--
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:500px;">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                           基本信息
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        <section class="panel panel-form">
+                            <form id="registInfo" role="form" class="form-horizontal parsley-form" data-parsley-validate
+                                  action="" method="post">
+                                <div class="row mb10">
+                                    <div class="col-lg-12">
+                                        <div style="width: 100%;border-bottom: 1px solid #C9C5C5;opacity: 0.6  ">注册信息</div><br>
+                                            <div class="form-group">
+                                                <label for="loginname" class="col-sm-2 control-label">用户名称</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" id="loginname" class="form-control"  data-parsley-required="true"
+                                                           placeholder="用户名称" value="${sysUser.loginname!}" readonly>
+                                                </div>
+                                                <label for="username" class="col-sm-2 control-label">真实姓名</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" id="username" class="form-control"  data-parsley-required="true"
+                                                           placeholder="真实姓名" value="${sysUser.username!}" readonly>
+                                                </div>
+                                            </div>
+                                        <div class="form-group">
+
+                                            <label for="sex" class="col-sm-2 control-label">性别</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" id="sex" class="form-control" data-parsley-required="true" placeholder="性别" value="" readonly>
+                                            </div>
+                                            <label for="tel" class="col-sm-2 control-label">联系电话</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" id="tel" class="form-control" data-parsley-required="true"
+                                                       placeholder="联系电话" value="${sysUseradd.tel!}" readonly>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="airportname" class="col-sm-2 control-label">机场名称</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" id="airportname" class="form-control"  data-parsley-required="true"
+                                                       placeholder="机场名称" value="${baseAirport.airportname!}" readonly>
+                                            </div>
+                                            <label for="unitName" class="col-sm-2 control-label">单位名称</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" id="unitName" class="form-control" data-parsley-required="true"
+                                                       placeholder="单位名称" value="${sysUnit.name!}" readonly>
+                                            </div>
+                                            &lt;!&ndash;<label for="jobs" class="col-sm-2 control-label">职位</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" id="jobs" class="form-control" data-parsley-required="true"
+                                                       placeholder="职位" value="${sysUseradd.jobs!}" readonly>
+                                            </div>&ndash;&gt;
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="cardid" class="col-sm-2 control-label">证件号</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" id="cardid" class="form-control"  data-parsley-required="true"
+                                                       placeholder="证件号" value="${sysUseradd.cardid!}" readonly>
+                                            </div>
+                                            <label for="pictureads" class="col-sm-2 control-label">员工图片</label>
+                                            <div class="col-xs-4" >
+                                                <img src="${imgPath!}" id="pictureads" alt="员工图片" style=" width: 100px;
+        height: 100px;" data-action="zoom">
+                                            </div>
+
+                                        </div>
+                                        <div style="width: 100%;border-bottom: 1px solid #C9C5C5;opacity: 0.6  ">审核信息</div><br>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3"></div>
+                            </form>
+                        </section>
+                        <section class="panel panel-form">
+                            <form id="auditForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
+                                  action="" method="post">
+                                <input name="id" type="hidden" value="${sysRegistaudit.id!}">
+                                <div class="row mb10">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <label for="auditorId" class="col-sm-2 control-label">${msg['sys.registaudit.column.auditorId']}</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" id="auditorId" class="form-control" name="auditorId" data-parsley-required="true"
+                                                       placeholder="${msg['sys.registaudit.column.auditorId']}" value="${auditor.loginname!}" readonly>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="auditTime" class="col-sm-2 control-label">${msg['sys.registaudit.column.auditTime']}</label>
+                                                <div class="col-sm-3">
+                                                    <input type="text" id="auditTime" class="form-control" name="auditTime" data-parsley-required="true"
+                                                           placeholder="${msg['sys.registaudit.column.auditTime']}" value="${sysRegistaudit.auditTime!}" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        &lt;!&ndash; <div class="form-group">
+                                             <label for="pstatus" class="col-sm-2 control-label">${msg['sys.registaudit.column.pstatus']}</label>
+                                             <div class="col-sm-8">
+                                                 <input type="text" id="pstatus" class="form-control" name="pstatus" data-parsley-required="true"
+                                                        placeholder="${msg['sys.registaudit.column.pstatus']}" value="" readonly>
+                                             </div>
+                                         </div>&ndash;&gt;
+                                       &lt;!&ndash; <div class="form-group">
+                                            <label for="a" class="col-sm-2 control-label">${msg['sys.registaudit.column.a']}</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" id="a" class="form-control" name="a"
+                                                       placeholder="${msg['sys.registaudit.column.a']}" value="${sysRegistaudit.a!}" readonly>
+                                            </div>
+                                            <label for="b" class="col-sm-2 control-label">${msg['sys.registaudit.column.b']}</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" id="b" class="form-control" name="b"
+                                                       placeholder="${msg['sys.registaudit.column.b']}" value="${sysRegistaudit.b!}" readonly>
+                                            </div>
+                                        </div>&ndash;&gt;
+                                        <div class="form-group">
+                                            <label for="result" class="col-sm-2 control-label">${msg['sys.registaudit.column.result']}</label>
+                                            <div class="col-sm-2">
+                                                <select id="result" data-parsley-required="true" class="form-control" name="result" disabled="disabled">
+                                                    <option value="-1">待审核</option>
+                                                    <option value="0">退回</option>
+                                                    <option value="1">通过</option>
+                                                </select>
+                                            </div>
+                                            <label for="result" class="col-sm-2 control-label">分配角色</label>
+                                            <div class="col-sm-2">
+                                                <select id="roleName"  data-parsley-required="true" class="form-control" name="roleName" disabled>
+                                                    <option value="" selected="">请选择</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="suggestion" class="col-sm-2 control-label">${msg['sys.registaudit.column.suggestion']}</label>
+                                            <div class="col-sm-4">
+                                                <textarea type="text" id="suggestion" class="form-control" data-parsley-required="true"
+                                                          placeholder="${msg['sys.registaudit.column.suggestion']}"  readonly>${sysRegistaudit.suggestion!}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3"></div>
+
+                            </form>
+                        </section>
+
+                    </div>
+                    &lt;!&ndash;&ndash;&gt;
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+-->
+
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">人员查看</a>
+                    </div>
+                </header>
+                <div class="list-group">
+                    <div class="list-group" id="collapseOne" class="panel-collapse collapse in">
+                        <div style="width: 100%;border-bottom: 1px solid #C9C5C5;opacity: 0.6  ">注册信息</div>
+                        <br>
+                        <table class="table table-bordered table-striped mg-t datatable">
+                            <tbody>
+                            <tr>
+                                <td>用户名称</td>
+                                <td>${sysUser.loginname!}</td>
+                            </tr>
+                            <tr>
+                                <td>真实姓名</td>
+                                <td>${sysUser.username!}</td>
+                            </tr>
+                            <tr>
+                                <td>性别</td>
+                                <td id="sex"></td>
+                            </tr>
+                            <tr>
+                                <td>联系电话</td>
+                                <td>${sysUseradd.tel!}</td>
+                            </tr>
+                            <tr>
+                                <td>单位名称</td>
+                                <td>${sysUnit.name!}</td>
+                            </tr>
+                            <tr>
+                                <td>机场名称</td>
+                                <td>${baseAirport.airportname!}</td>
+                            </tr>
+                            <tr>
+                                <td>证件号</td>
+                                <td>${sysUseradd.cardid!}</td>
+                            </tr>
+                            <tr>
+                                <td>员工图片</td>
+                                <td>
+                                    <div class="col-sm-8" id="imgpath">
+                                        <!--<img src="${imgPath!}" id="pictureads" alt="员工图片" style=" width: 100px; height: 100px;" data-action="zoom">-->
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div style="width: 100%;border-bottom: 1px solid #C9C5C5;opacity: 0.6  ">审核信息</div>
+                        <br>
+                        <table class="table table-bordered table-striped mg-t datatable">
+                            <tbody>
+                            <tr>
+                                <td>审核人</td>
+                                <td>${auditor.loginname!}</td>
+                            </tr>
+                            <tr>
+                                <td>审核时间</td>
+                                <td id="auditTime"></td>
+                            </tr>
+                            <tr>
+                                <td>审核结果</td>
+                                <td id="result"></td>
+                            </tr>
+                            <tr>
+                                <td>分配角色</td>
+                                <td id="code"></td>
+                            </tr>
+                            <tr>
+                                <td>审核意见</td>
+                                <td id="suggestion">${sysRegistaudit.suggestion}</td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">${msg['globals.button.ok']}</button>
+</div>
+<script language="JavaScript">
+
+
+    var sex = "${sysUseradd.sex!}";
+    var code = "${sysRegistaudit.roleCode!}";
+    var result = "${sysRegistaudit.result!}";
+    var auditTime = "${sysRegistaudit.auditTime!}";
+    var pic = "${imgPath!}";
+    $(function () {
+        var imgtmp = "";
+        if (pic) {
+            console.debug(pic + "-------------------")
+            var img = pic.split(',');
+            img.forEach(function (data) {
+                imgtmp = imgtmp + "<img src='" + data + "' class='img-rounded' data-action='zoom' style='max-height: 100px'>&nbsp;&nbsp;"
+            })
+            $('#imgpath').html(imgtmp)
+        }
+        if (sex === "1") {
+            $("#sex").html("女");
+        } else if (sex === "0") {
+            $("#sex").html("男");
+        } else {
+            $("#sex").html("");
+        }
+        //处理时间
+        $("#auditTime").html(auditTime.replace(/\+/g, " "));
+        //处理审核结果
+        if (result === "-1") {
+            $("#result").html("待审核");
+        } else if (result === "1") {
+            $("#result").html("退回");
+        } else {
+            $("#result").html("通过");
+        }
+
+        $.ajax({
+            url: "${base!}/platform/sys/role/data",
+            type: "POST",
+            data: {unitid: "${sysUseradd.unitid!}"},
+            // data:{unitid:"root"},
+            success: function (data) {
+                $.each(data.data, function (index, ele) {
+                    if (ele.code === code) {
+                        $("#code").html(ele.name);
+                    }
+
+                })
+            }
+        })
+    });
+</script>

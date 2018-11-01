@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html class="signin no-js" lang="${lang!}" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="${AppName!}">
+    <meta name="keywords" content="nutz,nutzwk">
+    <title>${AppName!}</title>
+    <link rel="icon" href="${base!}/assets/img/bvcloud/BestVision.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="${base!}/assets/img/bvcloud/BestVision.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="${base!}/assets/plugins/bvcloud/login.css">
+    <link rel="stylesheet" href="${base!}/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${base!}/assets/css/font-awesome.css">
+    <link rel="stylesheet" href="${base!}/assets/css/themify-icons.css">
+    <link rel="stylesheet" href="${base!}/assets/css/animate.min.css">
+    <link rel="stylesheet" href="${base!}/assets/css/skins/palette.css">
+    <link rel="stylesheet" href="${base!}/assets/css/fonts/font.css">
+    <link rel="stylesheet" href="${base!}/assets/css/main.css">
+
+    <!--[if lt IE 9]>
+    <script src="${base!}/assets/js/html5shiv.js"></script>
+    <script src="${base!}/assets/js/respond.min.js"></script>
+    <script src="${base!}/assets/js/json2.js"></script>
+    <![endif]-->
+    <script src="${base!}/assets/plugins/modernizr.js"></script>
+    <script src="${base!}/assets/plugins/jquery-1.11.1.min.js"></script>
+    <script src="${base!}/assets/js/jquery.pjax.js"></script>
+    <script src="${base!}/assets/js/sso/RSA.js"></script>
+    <script src="${base!}/assets/js/sso/BigInt.js"></script>
+    <script src="${base!}/assets/js/sso/Barrett.js"></script>
+    <script src="${base!}/assets/js/qrcode.js"></script>
+    <script src="${base!}/assets/js/jquery.ajaxupload.js"></script>
+    <script type="text/javascript">
+        var base = '${base!}';
+    </script>
+    <script src="${base!}/assets/js/toast.js"></script>
+
+</head>
+
+
+<body id="wrap">
+
+<div class="modal fade" id="regAccount" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">用户注册</h4>
+            </div>
+            <div class="modal-body">
+                    <div class="form-group">
+                        <label for="recipient-loginname" class="control-label">用户名</label><span style="color: #FF0000">*</span>
+                        <input type="text" required="required" class="form-control" id="recipient-loginname" placeholder="请输入用户名">
+                        <p id="lblloginname" style="color: #FF0000"></p>
+                    </div>
+                <div class="form-group">
+                    <label for="inputPassword3" class="control-label">密码</label><span style="color: #FF0000">*</span>
+                    <input type="password" required="required" class="form-control" id="inputPassword3" placeholder="请输入8位以上密码">
+                    <p id="lblpassword" style="color: #FF0000"></p>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword" class="control-label">确认密码</label><span style="color: #FF0000">*</span>
+                    <input type="password" required="required" class="form-control" id="confirmPassword" placeholder="请再次输入您的密码">
+                    <p id="confPassword" style="color: #FF0000"></p>
+                </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="control-label">真实姓名</label><span style="color: #FF0000">*</span>
+                        <input type="text" required="required" class="form-control" id="recipient-name" placeholder="请输入真实姓名">
+                        <p id="lblname" style="color: #FF0000"></p>
+                    </div>
+                <div class="form-group">
+                    <label for="recipient-tel" class="control-label">联系电话</label><span style="color: #FF0000">*</span>
+                    <input type="text" class="form-control" id="recipient-tel" placeholder="请输入联系电话">
+                    <p id="lbltel" style="color: #FF0000"></p>
+                </div>
+                    <div class="form-group">
+                        <label for="corp" class="control-label">所属单位</label>
+                        <div class="select">
+                            <select class="form-control" id="corp">
+                            <!--<option>1</option>-->
+                            <!--<option>2</option>-->
+                            <!--<option>3</option>-->
+                            <!--<option>4</option>-->
+                            <!--<option>5</option>-->
+                        </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="airport" class="control-label">所属机场</label>
+                        <div class="select">
+                        <select class="form-control" id="airport"><!--获取所属机场-->
+                            <option value="91e6b25e7c9f4e69ac739225f86f8048" selected="selected">昆明长水国际机场</option>
+
+                        </select></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="user_job" class="control-label">职位</label>
+                        <input type="text" class="form-control" id="user_job" >
+                    </div>
+                    <div class="form-group">
+                        <label for="user_number" class="control-label">证件号</label><span style="color: #FF0000" hidden>*</span>
+                        <input type="text" class="form-control" id="user_number">
+                        <p id="lblnumber" style="color: #FF0000"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="wxLoginname" class="control-label">微信账号</label><span style="color: #FF0000" hidden>*</span>
+                        <input type="text" class="form-control" id="wxLoginname">
+                        <p id="wxnumber" style="color: #FF0000"></p>
+                    </div>
+                    <form id="formFirst" name="upload" enctype="multipart/form-data"
+                          method="post" class="form-horizontal">
+
+                        <div class="form-group">
+                            <div class="col-sm-12"><p style="color: #FF0000">请选择500K以内，png或jpg格式的图片上传</p></div>
+                            <div class="col-sm-2">
+
+                                <input id="ufile" type="file" name="uploads" accept="image/png,image/jpeg"/></p>
+                                <input type="button" value="上传照片" onclick="javascript:uploadall('formFirst')"/>
+                            </div>
+                            <div class="col-sm-2 pull-right" style="position:absolute;right:10px;">
+                                <img id="uimg" style="width: 120px;width: 200px" type="image"  />
+                            </div>
+                        </div>
+                    </form>
+                <input type="hidden" id="pictureads">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="btnCancel" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="submitreg">提交注册</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">扫码下载</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="row" align="center">
+                    <div class="col-sm-6">
+                        <div class="cc ti-apple"> Apple</div>
+                    <img src="${base!}/assets/img/bvcloud/iphone_code.png" class="ad">
+                    <p align="center">扫描上方二维码下载</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="cc ti-android"> Android</div>
+                        <img src="${base!}/assets/img/bvcloud/iAirportUe.png" class="ad">
+                        <p align="center">扫描上方二维码下载<br/>(微信、QQ扫描后请跳转到浏览器下载)</p>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="overlay"></div>
+<div id="container" class="center-wrapper ">
+
+    <nav class="navbar-default navbar-fixed-top" >
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false" >
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div class="navbar-brand"></div>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+
+                <!-- START Language list-->
+                <ul class="nav navbar-nav navbar-right" >
+                    <%if(lang==null||lang=="zh_CN"){%>
+                    <li id="mobile"><a class="ti-mobile" data-toggle="modal" data-target=".bs-example-modal-md"> 手机APP下载</a></li>
+                    <%}else{%>
+                    <li id="mobile"><a class="ti-mobile" data-toggle="modal" data-target=".bs-example-modal-md"> App Download </a></li>
+                    <%}%>
+                   <!-- <li class="language-dropdown dropdown hidden-md">
+                        <a href="javascript:;" data-toggle="dropdown" id="language">
+                            <%if(lang==null||lang=="zh_CN"){%>
+                            <img src="${base!}/assets/img/flags/cn.png" class="flag">
+                            <span class="language">中文</span> <span class="caret"></span></a>
+                            <%}else{%>
+                            <img src="${base!}/assets/img/flags/us.png" class="flag">
+                            <span class="language">English</span> <span class="caret"></span></a>
+                        <%}%>
+                            <ul class="dropdown-menu dropdown-menu-right animated fadeInUp">
+                                <li>
+                                    <a href="?lang=en_US">
+                                        <img src="${base!}/assets/img/flags/us.png" class="flag">
+                                        <span class="language">English</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?lang=zh_CN">
+                                        <img src="${base!}/assets/img/flags/cn.png" class="flag">
+                                        <span class="language">中文</span>
+                                    </a>
+                                </li>
+                            </ul>
+                    </li>-->
+                </ul>
+                <!-- END Language list    -->
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+
+
+    <div class="center-content">
+        <div class="row no-m">
+            <div class="col-xs-10 col-xs-offset-1 col-sm-4 col-sm-offset-0 col-md-5 col-md-offset-1 col-lg-3 col-lg-offset-1 login_bg1">
+
+                <%if(lang==null||lang=="zh_CN"){%>
+                       <div class="zh_appname">
+
+                           <h2>${AppName!}<!--<small>V1.0</small>--></h2>
+
+                       <p>SaaS平台服务，资源共享</p>
+                       <p>GPS定位，即时监控设备使用及维护情况</p>
+                       <p>O2O运营模式，全方位线上、线下技术支持</p>
+            </div>
+                <%}else{%>
+                <div class="eng_appname">
+
+                    <h2>Intelligent Airport <br>Management Platform<small>V1.0</small></h2>
+
+                    <p>SaaS platform services, resource sharing</p>
+                    <p>GPS positioning, real-time monitoring equipment use and maintenance</p>
+                    <p>O2O operating mode, all-round online, offline technical support</p>
+                </div>
+                <%}%>
+            </div>
+
+
+            <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-2 col-md-5 col-md-offset-0 col-lg-3 col-lg-offset-4 login_bg2">
+
+                <section id="user" class="panel bg-white no-b fadeIn animated" style="display: block; position:relative;">
+                    <%if(lang==null||lang=="zh_CN"){%>
+                    <h2 class="zh">账号登录 <!--<span class="code" onclick="btn1()">扫码登录</span>--><span > <a id="uReg" href="/platform/sys/user/registration" class="ti-pencil-alt zc1" style="position: absolute;top:-12px; right:-50px"  target="_Blank"> 用户注册</a ></span></h2><!--data-toggle="modal" data-target="#regAccount"-->
+                    <%}else{%>
+                    <h2 class="eng">Login<span class="code" onclick="btn1()">Barcode</span></h2>
+                    <%}%>
+                    <div class="p15">
+                        <form id="loginForm" action="${base!}/platform/login/doLogin" data-parsley-validate="" novalidate=""
+                              role="form"
+                              method="post">
+                            <input type="hidden" id="platformCaptcha" name="platformCaptcha">
+
+                            <div class="form-group">
+                                <input type="text" id="username" name="username" value="" required
+                                       class="form-control input-lg mb25"
+                                       placeholder="${msg['login.username']}">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" id="password" name="password" value="" required
+                                       class="form-control input-lg mb25"
+                                       placeholder="${msg['login.password']}">
+                            </div>
+                            <div id="tip" class="alert alert-danger" role="alert" style="display:none"></div>
+                            <!--<p id="tip" class="bg-danger p15" style="display:none"></p>-->
+
+                            <div class="show">
+                                <button id="login" class="btn btn-primary btn-lg btn-block" type="button"
+                                        data-loading-text="${msg['login.submit']}...">
+                                    ${msg['login.submit']}
+                                </button>
+                            </div>
+                        </form>
+                        <!--<%if(lang==null||lang=="zh_CN"){%>-->
+                        <!--<div class=" pull-right" style="display: block"> <a class="ti-pencil-alt zc1" data-toggle="modal" data-target="#regAccount"> 用户注册</a></div>-->
+                        <!--<%}else{%>-->
+                        <!--<%}%>-->
+                    </div>
+
+                </section>
+
+
+                <section id="barcode" class="panel bg-white no-b fadeIn animated" style="display: none">
+                    <%if(lang==null||lang=="zh_CN"){%>
+                    <h2 class="zh">扫码登录 <span class="computer" onclick="btn2()">账号登录</span></h2>
+                    <h5 align="center" id="codectnt" style="color:#FF0000"></h5>
+                    <div class=" row" align="center">
+                        <div class="qr_code" id="qrcode"></div>
+                        <p>请使用<a data-toggle="modal" data-target=".bs-example-modal-sm" style="cursor: pointer">安卓手机APP客户端</a>，扫一扫登录</p>
+                    </div>
+                    <%}else{%>
+                    <h2 class="eng">Barcode<span class="computer" onclick="btn2()"> User ID</span></h2>
+                    <div class=" row" align="center">
+                        <div class="qr_code" id="eqrcode"></div>
+                        <p>Please use <a>Android phone APP client</a><br>Sweep to login</p>
+                    </div>
+                    <%}%>
+
+                </section>
+
+                <script type="text/javascript">
+                    //20180323zhf0951
+                    //是否上传了图片
+                    var upflag =false;
+                    $("#ufile").change(function(e){
+                        $("#uimg").attr("src",URL.createObjectURL(e.target.files[0]));
+                    });
+
+
+                    function uploadall(id){
+//                        alert(id);
+                        $("#"+id).ajaxUpload({
+                            url:"${base}/platform/sys/user/upload",
+                            dataType:'json',
+                            success: function (data, status, xhr){
+                                if(data.result=="上传成功!")
+                                {
+                                    //将用户图片名称保存到用户表中
+                                    upflag=true;
+                                    $("#pictureads").val(data.uPhoto);
+                                    Toast.success("照片上传成功");
+                                }else{
+                                    Toast.error("照片上传失败，请使用2M以内jpg、png格式");
+                                }
+                            },
+                            error:function(a,b,c){
+                                Toast.error("服务器繁忙，请重试");
+                            }
+                        });
+                    }
+
+
+
+                    function btn1(){
+
+                        document.getElementById('barcode').style.display='block';
+                        document.getElementById('user').style.display='none';
+
+                        //1 将二维码写入后台数据库内
+                        //2 扫描二维码的手机将用户id写入到对应二维码
+                        //3 web端监控数据库此二维码行是否有数据写入
+                        //4 如果有userid写入且写入时间在二维码有效期内，则判断登录成功
+                        //5 否则登录失败
+
+                        var text = guid();
+                        //1
+                        setCode(text);
+                        makeCode(text);
+
+
+
+                    }
+                    function btn2(){
+
+                        document.getElementById('user').style.display='block';
+                        document.getElementById('barcode').style.display='none';
+                        clearInterval(id);
+                    }
+                    var id=0;
+                    var obj=null;
+                    function setCode(code){
+//                        alert(code);
+                        var url="${base!}/platform/sys/barcode/addTo";
+                        var param={"code":code};
+                        $.post(url,param,function(d){
+                            if(d.code==0){//成功
+                                //3
+                                id=setInterval(function(){
+                                    var rslt=getUserid(code);
+
+                                    if(rslt==-1){
+                                        clearInterval(id);
+//                                        $.dialog
+//                                        alert("服务器繁忙，请刷新再试");
+                                        document.getElementById("codectnt").innerHTML="服务器繁忙，请刷新再试";
+                                    }else if(rslt==2){
+                                        clearInterval(id);
+                                        document.getElementById("codectnt").innerHTML="二维码已失效，请刷新再试";
+//                                        alert("二维码已失效，请刷新再试");
+                                    }else if(rslt==null||rslt==3){
+                                        clearInterval(id);
+                                    }else if(rslt==0){}
+                                    else{
+                                        clearInterval(id);
+                                        userLogin(rslt);
+//                                        alert("登陆成功:"+rslt);
+
+                                    }
+                                },1000);
+                            }
+                        });
+                    }
+
+                    function userLogin(user){
+                        var url="${base!}/platform/login/doTokenLogin";
+                        var param={"username":user.loginname,"password":user.password};
+                        $.ajaxSettings.async=false;
+                        $.post(url,param,function(d){
+                            alert(d.msg);
+                        });
+                    }
+
+                    function getUserid(code){
+                        var url="${base!}/platform/sys/barcode/fetchUser";
+                        var param={"code":code};
+                        var rslt=null;
+                        $.ajaxSettings.async=false;
+                        $.post(url,param,function(d){
+//                            alert(-1);
+                            if(d!=-1){
+//                                alert(0);
+                                if(d.userid){//验证是否在效期内
+//                                    alert(2);
+                                    if(d.curDate&&d.startDate&&d.endDate){
+//                                        alert(3);
+                                        var cur=new Date(d.curDate.replace(/\-/g, "\/"));
+                                        var start=new Date(d.startDate.replace(/\-/g, "\/"));
+                                        var end=new Date(d.endDate.replace(/\-/g, "\/"));
+                                        if(start<cur<end){
+//                                            alert(4);
+                                            //rslt=d.user.username;//登录成功
+                                            rslt=d.user;
+                                        }
+                                        else{
+//                                            alert(5);
+                                            rslt=2;//二维码失效
+                                        }
+                                    }
+                                    else{
+//                                        alert(6);
+                                            rslt=-1;
+
+                                    }
+                                }
+                                else
+                                {
+//                                    alert(1);
+                                    if(d.endDate){
+                                        var end=new Date(d.endDate.replace(/\-/g, "\/"));
+                                        var cur=new Date();
+//                                        alert(cur>end);
+                                        if(cur>end){//过期
+                                            rslt=2;
+                                        }
+                                        else{
+                                            rslt=0;//未登录
+                                        }
+                                    }
+                                    else{
+//                                        alert(7);
+                                        rslt=0;//未登录
+                                    }
+                                }
+                            }else{
+//                                alert(8);
+                                rslt=d;//错误
+                            }
+                        });
+                        return rslt;
+                    }
+                </script>
+            </div>
+
+        </div>
+        <%if(lang==null||lang=="zh_CN"){%>
+        <div class="clo-sm-12">
+            <p class="text-center text-default" style="color:rgba(255,255,255,0.5); bottom:0; position: absolute; width: 100%;">
+            <a href="http://www.miitbeian.gov.cn" style="color:rgba(255,255,255,0.5)">鄂ICP备17026837号-1</a>  &nbsp;&nbsp;佰睿创璟 <span id="year" class="mr5"></span>版权所有
+        </p>
+        </div>
+        <%}else{%>
+        <%}%>
+    </div>
+
+</div>
+
+<!-- 验证码 -->
+<div id="dialogVeryCode" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" style="color:black;">
+                    ${msg['login.error.verifycode']}
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form id="f2" onsubmit="return false;" data-parsley-validate="" novalidate="">
+                    <div class="row">
+                        <div class="col-xs-2"></div>
+                        <div class="col-xs-6">
+                            <input type="text" id="verifycode" required class="form-control input-lg"
+                                   placeholder="${msg['login.captcha']}">
+                        </div>
+                        <div class="col-xs-4">
+                            <img id="captcha_img" src="${base!}/platform/login/captcha" style="height:46px;cursor: pointer;"
+                                 onclick="$('#captcha_img').attr('src', '${base!}/platform/login/captcha?_=' + new Date().getTime())"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="ok" type="button" class="btn btn-primary" data-dismiss="modal">${msg['login.submit']}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function bodyRSA()
+    {
+        setMaxDigits(200);
+        return new RSAKeyPair("${publicKeyExponent!'10001'}","","${publicKeyModulus!'a5aeb8c636ef1fda5a7a17a2819e51e1ea6e0cceb24b95574ae026536243524f322807df2531a42139389674545f4c596db162f6e6bbb26498baab074c036777'}");
+    }
+    var key =  bodyRSA();
+    var temp;
+    //电话号码的正则表达式
+    var r=/^((0\d{2,3}-\d{7,8})|(1[3456789]\d{9}))$/;
+    $(document).ready(function () {
+        //1. 获取公司名称
+        $.post("${base!}/platform/sys/unit/getUnit",{},function(d){
+            if(d){
+                var corp = document.getElementById("corp");
+//                alert(JSON.stringify(d));
+                for(var i=0;i<d.length;i++){
+                    var option = document.createElement("option");
+                    option.id="option"+i;
+                    option.value=d[i].id;
+                    option.innerHTML=d[i].name;
+                    corp.appendChild(option);
+                }
+            }
+        });
+
+
+        $("#year").html(new Date().getFullYear());
+        $("#login").on("click",function () {
+            temp=$("#password").val();
+            $("#password").val(encryptedString(key,$("#password").val().split("").reverse().join("")));
+            $("#loginForm").submit();
+        });
+        $("#loginForm").ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                form.find("button:submit").text("${msg['login.load']}");
+                form.find("button:submit").attr("disabled", "disabled");
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    $("#tip").hide();
+                    form.find("button:submit").text("${msg['login.success']}");
+                    window.location.href = "${base!}/platform/home";
+                } else if (data.code == 2) {
+                    $("#verifycode").val("");
+                    $("#password").val(temp);
+                    $("#dialogVeryCode img").attr("src", '${base!}/platform/login/captcha?_=' + new Date().getTime());
+                    return $("#dialogVeryCode").modal({show: true, backdrop: 'static', keyboard: false});
+                } else {
+                    $("#platformCaptcha").val("");
+                    $("#password").val("").focus();
+                    $('#captcha_img').attr('src', '${base!}/platform/login/captcha?_=' + new Date().getTime());
+                    $("#tip").html(data.msg);
+                    $("#tip").fadeIn();
+                    form.find("button:submit").text("${msg['login.submit']}");
+                    form.find("button:submit").removeAttr("disabled")
+                }
+            }
+        });
+        $("#ok").on("click", function () {
+            if ($("#verifycode").val() == "") {
+                $("#f2").submit();
+                return false;
+            }
+            //20180313zhf1621
+            $("#platformCaptcha").val($("#verifycode").val());
+            temp=$("#password").val();
+            $("#password").val(encryptedString(key,$("#password").val().split("").reverse().join("")));
+            $("#loginForm").submit();
+        });
+        $("#dialogVeryCode").on("keypress", function (event) {
+            var key = event.which;
+            if (key == 13) {
+                $("#ok").trigger("click");
+            }
+        });
+        $("#username").focus();
+
+    });
+
+    //失去焦点时提醒和查重
+    $("#recipient-loginname").on("blur",function(e){
+
+        if(this.value.trim().length==0){
+            $("#lblloginname").html("请填写登录用户名");
+        }else{
+            $("#lblloginname").html("");
+        }
+        var url="${base!}/platform/sys/user/checkLogin";
+        $.post(url,{"loginname":$("#recipient-loginname").val().trim()},function(d){
+            if(d){
+                if(d=="fail" && $("#recipient-loginname").val().trim().length > 0){
+                    $("#lblloginname").html("已经存在此用户名，请重新填写");
+                }else if(d=="error"){
+                    $("#lblloginname").html("");
+                }
+            }else{
+                $("#lblloginname").html("");
+            }
+        });
+
+    });
+    //20180323zhf1533
+    $("#recipient-name").on("blur",function(e){
+        if(this.value.trim().length==0){
+            $("#lblname").html("请填写真实姓名");
+        }else{
+            //通过personname先判断是否存在员工
+            $.ajax({
+                type: "POST",
+                url: "/platform/base/person/getCountByPersonName",
+                data: {personname:$("#recipient-name").val()},
+                success: function(data){
+                    if(data == 0){
+                        $("#lblname").html("该员工不存在");
+                    }else{
+                        $("#lblname").html("");
+                    }
+                }
+            });
+        }
+
+    });
+
+    $("#inputPassword3").on("blur",function(e){
+        if(this.value.length<8){
+            $("#lblpassword").html("密码不能少于8位");
+        }else if(this.value.length> 100){
+            $("#lblpassword").html("密码过长!")
+        }else {
+            $("#lblpassword").html("");
+        }
+    });
+
+    $("#confirmPassword").on("blur",function(e){
+        if($("#inputPassword3").val().length == 0){
+            $("#confPassword").html("再次输入您的密码");
+        }else if($("#inputPassword3").val() != $(this).val()){
+            $("#confPassword").html("两次密码输入不一致!");
+        }else{
+            $("#confPassword").html("");
+        }
+    });
+
+     $("#user_number").on("blur",function(e){
+        if(this.value.trim().length==0){
+            $("#lblnumber").html("请填写证件号");
+        }else{
+            $("#lblnumber").html("");
+        }
+    });
+
+    $("#recipient-tel").on("blur",function(e){
+
+        if(!r.test($("#recipient-tel").val().trim())){
+            $("#lbltel").html("请填写正确电话号码");
+        }else{
+            $("#lbltel").html("");
+        }
+    });
+
+    $("#uReg").on("click",function(e){
+        /* $("#recipient-loginname").val("");
+        $("#inputPassword3").val("");
+        $("#recipient-name").val("");
+        $("#recipient-tel").val("");
+        $("#user_job").val("");
+        $("#user_number").val("");
+        $("#uimg").attr("src","");
+        $("#confirmPassword").val("");
+        document.getElementById("ufile").value="";
+        var dialog = $("#regAccount");
+        dialog.modal("show");*/
+    });
+
+//    $("#btnCancel").on("click",function(e){
+//        var cancel = confirm("是否取消注册？");
+//        if(cancel==true){
+//            $("#recipient-loginname").val("");
+//            $("#inputPassword3").val("");
+//            $("#recipient-name").val("");
+//            $("#recipient-tel").val("");
+//            $("#user_job").val("");
+//            $("#user_number").val("");
+//            $("#uimg").attr("src","");
+//            document.getElementById("ufile").value="";
+//            var dialog = $("#regAccount");
+//            dialog.modal("hide");
+//        }
+//    });
+
+
+            $("#submitreg").on("click",function(){
+                //先让所有文本框失去焦点
+                $("#recipient-loginname").blur();
+                $("#inputPassword3").blur();
+                $("#confirmPassword").blur();
+                $("#recipient-name").blur();
+                $("#recipient-tel").blur();
+                $("#user_job").blur();
+                $("#user_number").blur();
+
+                //20180323zhf0946
+                if($("#recipient-loginname").val().trim().length >0 && $("#inputPassword3").val().length>= 8 && $("#inputPassword3").val().length <= 100 && ($("#inputPassword3").val() === $("#confirmPassword").val()) && $("#recipient-name").val().trim().length > 0){
+                    //用户名,密码,确认密码，真实姓名都填写正确了(先验证领导也必须填的,公共验证)
+                    $("#lblloginname").html("");
+                    $("#lblpassword").html("");
+                    $("#lblname").html("");
+                    $("#confPassword").html("");
+                    judgeLeaderByPersonNameAndCardIdAjax();
+                }else{
+                    //登录用户名
+                    if($("#recipient-loginname").val().trim().length == 0){
+                        $("#lblloginname").html("请填写登录用户名");
+                        Toast.warning("请填写您的用户名");
+                    }
+                    //登录密码
+                    if($("#inputPassword3").val().length <8){
+                        $("#lblpassword").html("密码不能少于8位");
+                        Toast.warning("密码不能少于8位");
+                    }
+                    if($("#inputPassword3").val().length  >= 100){
+                        $("#lblpassword").html("密码过长!");
+                        Toast.warning("密码过长!");
+                    }
+                     //真实姓名
+                    if($("#recipient-name").val().trim().length  ==  0){
+                        $("#lblname").html("请填写真实姓名");
+                        Toast.warning("请填写您的真实姓名");
+                    }
+                    if($("#inputPassword3").val().length === 0){
+                        $("#confPassword").html("请填写您的确认密码!");
+                        Toast.warning("请先填写您的确认密码");
+                    }
+                    if($("#inputPassword3").val() != $("#confirmPassword").val()){
+                        $("#confPassword").html("两次输入的密码不一致");
+                        Toast.warning("两次输入的密码不一致");
+                    }
+                }
+            });
+    //20180323zhf0955
+    var needAuditFlag = false;
+    function judgeLeaderByPersonNameAndCardIdAjax(){
+          $.ajax({
+              type: "POST",
+              url: "/platform/base/person/judgeLeaderByPersonNameAndCardId",
+              data: {personname:$("#recipient-name").val().trim(),cardid:$("#user_number").val().trim(),unitid:$("#corp option:selected").val().trim()},
+              success: function(data){
+                  if(data.errMsg){
+                      Toast.error(data.errMsg);
+                      return;
+
+                  }else{
+                      console.debug(data)
+                      //没有错误信息
+                      if(data.isLeader || (r.test($("#recipient-tel").val().trim()) && $("#user_number").val().trim().length>0) || data.needAudit){
+                          if(data.needAudit){
+                              needAuditFlag = true;
+                              Toast.warning(data.needAudit);
+                              var dialog = $("#regAccount");
+                              dialog.modal("hide");
+                          }
+                          //如果是领导或者已经填写了证件号和正确的电话号码
+                            if(data.isLeader){
+                              leader = true;
+                            }else{
+                              leader = false;
+                            }
+
+                          //去掉电话提示信息
+                          $("#lbltel").html("");
+                          $("#recipient-tel").attr("required",false)
+                          //去掉证件号提示信息
+                          $("#lblnumber").html("");
+                          $("#user_number").prev("span").hide();
+                          //图片
+                          upflag = false;
+                          userAndUseraddAjax();
+                      }else{
+                          //证件号没填
+                          if($("#user_number").val().trim().length == 0){
+                              Toast.warning("请填写证件号")
+                              $("#lblnumber").html("请填写证件号");
+                              $("#user_number").attr("required",true);
+                              $("#user_number").prev("span").show();
+                              $("#user_number").attr("required",true);
+                          }
+
+                          //电话
+                          //1.电话号不正确(没填或不符合规范)
+                          if(!r.test($("#recipient-tel").val().trim())){
+                              Toast.warning("请填写正确电话号码");
+                              $("#lbltel").html("请填写正确电话号码");
+                              $("#recipient-tel").attr("required",true);
+                          }
+                          //上传图片
+                          if($("#ufile")[0].files.length>0 && !upflag){
+                              Toast.warning("请先上传图片再提交注册");
+                          }
+                      }
+                  }
+
+              }
+          });
+      }
+
+     var leader = false;
+    //添加sys_user和sys_useradd by zhf
+    function userAndUseraddAjax(){
+        $.post(
+            "${base!}/platform/sys/user/addUser",
+            {
+                "username":$("#recipient-name").val().trim(),
+                "loginname":$("#recipient-loginname").val().trim(),
+                "password":$("#inputPassword3").val(),
+                "unitid":$("#corp option:selected").val().trim(),
+                "cardid":$("#user_number").val().trim(),
+                "airportid":$("#airport option:selected").val().trim(),
+                "needAuditFlag":needAuditFlag,
+                "leader":leader
+            },
+            function(d){
+                if(d){
+                    var userid=d.id;
+                    $.post(
+                        "${base!}/platform/sys/useradd/insertUseradd",
+                        {
+                            "userid":userid,
+                            "cardid":$("#user_number").val().trim(),
+                            "tel":$("#recipient-tel").val().trim(),
+                            "pictureads":$("#pictureads").val().trim(),
+                            "jobs":$("#user_job").val().trim(),
+                            "needAuditFlag":needAuditFlag
+                        },
+                        function(data){
+                            if(data){
+                                if(!needAuditFlag){
+                                    Toast.success("账户注册成功");
+                                }
+                                var dialog = $("#regAccount");
+                                dialog.modal("hide");
+                            }else{
+                                Toast.error("注册失败");
+                            }
+                        });
+                }
+            });
+    }
+
+
+    function uploadPic() {
+        var f = document.getElementById('upload'),
+            fd = new FormData(f);
+        $.ajax({
+            url:"${base!}/platform/sys/user/upload",
+            type:"post",
+            data:fd,
+            processData:false,
+            contentType:false,
+            success:function(res){
+                if(res){
+                    Toast.success("上传成功！");
+                }
+                console.log(res);
+                $("#pic").val("");
+                $(".showUrl").html(res);
+                $(".showPic").attr("src",res);
+            },
+            error:function(err){
+                Toast.error("网络连接失败,稍后重试",err);
+            }
+
+        })
+
+    }
+
+
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        width : 160,
+        height : 160
+    });
+    var eqrcode = new QRCode(document.getElementById("eqrcode"), {
+        width : 160,
+        height : 160
+    });
+
+
+    function makeCode(elText) {
+
+        if (!elText) {
+            return;
+        }
+        qrcode.makeCode(elText);
+        eqrcode.makeCode(elText);
+    }
+
+    function guid() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+            return v.toString(16);
+        });
+    }
+
+
+
+</script>
+
+
+
+<script src="${base!}/assets/bootstrap/js/bootstrap.js"></script>
+<script src="${base!}/assets/plugins/jquery.form.js"></script>
+<script src="${base!}/assets/plugins/parsley.min.js"></script>
+<script src="${base!}/assets/plugins/parsley.zh_cn.js"></script>
+
+</body>
+</html>

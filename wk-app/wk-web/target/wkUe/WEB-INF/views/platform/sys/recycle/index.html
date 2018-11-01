@@ -1,0 +1,135 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+
+</header>
+
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:500px;">
+        <section class="panel panel-form">
+                <div class="row mb10">
+                    <div class="col-lg-12">
+                        <div class="form-group has-feedback">
+                        <label for="personName" class="col-sm-2 control-label" style="left: 30px;top:10px">人员管理</label>
+                        <div class="col-sm-6" style="left: -40px">
+                            <div class="input-group">
+                                <input id="personName" type="text" class="form-control" placeholder="查看人员" disabled
+                                       value="<%if(!isEmpty(person)){%>${person.personname}<%}%>" />
+
+                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                            data-target="#dialogpersonSelect"><i class="ti-plus"></i> 选择
+                                                    </button>
+			                             		</span>
+                            </div>
+                           <!-- <input type="hidden" id="personid" name="personid" value="<%if(!isEmpty(obj)){%>${obj.id}<%}%>">-->
+                        </div>
+                    </div>
+                    </div>
+                    <div class="col-lg-2"></div>
+                </div>
+        </section>
+    </div>
+</div>
+<!-- 选择机场 -->
+<div id="dialogpersonSelect" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" style="width: 700px;">
+        <div class="modal-content" style="width: 700px;">
+
+            <section class="content-wrap bg-white">
+                <header class="header navbar bg-white shadow">
+                    <div class="pull-left offscreen-left btn-group tool-button" style="margin-top: 6px;">
+                        <a class="btn btn-primary navbar-btn" id="clear" data-delFlag = "false">清理</a>
+                    </div>
+                    <div class="pull-left offscreen-left btn-group tool-button" style="margin-top: 6px;left:15px;">
+                        <a class="btn btn-primary navbar-btn" id="restore" data-delFlag = "false">还原</a>
+                    </div>
+                </header>
+                <div class=panel-body style="padding-top: 50px;">
+                    <div class="table-responsive no-border" style="padding-top: 5px;" >
+                        <table id="datatable_select" class="table table-bordered table-striped mg-t datatable">
+                            <thead>
+                            <tr>
+                                <th>人员名称</th>
+                                <th>人员编号</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    var datatable_select;
+    function initdatatable_select() {
+        datatable_select = $('#datatable_select').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "ajax": {
+                "url": "${base}/platform/base/person/data",
+                "type": "post",
+                "data": function (d) {
+                    d.delFlag = true;
+                }
+            },
+            "order": [[0, "desc"]],
+            "columns": [
+                {"data": "personnum", "bSortable": true},
+                {"data": "personname", "bSortable": true}
+            ],
+            "columnDefs": [
+                {
+
+                }
+            ]
+        });
+        datatable_select.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#name").on('keyup', function () {
+            datatable_select.ajax.reload();
+        });
+    }
+
+
+    function _selectOn() {
+        var chks = datatable_select.rows('.selected').data();
+        if (chks.length > 0) {
+            var arr = []
+            $.each(datatable_select.rows('.selected').data(), function (i, n) {
+                //console.debug(this);
+                arr.push(this["id"]);
+                arr.push(this["personname"]);
+                arr.push(this["personnum"]);
+            });
+
+            $('#dialogpersonSelect').modal('hide');
+            return arr;
+        }else{
+            Toast.warning("请先选择机场！");
+        }
+
+    }
+    $(function () {
+        initdatatable_select();
+        //清理数据
+        $("#clear").click(function () {
+            _selectOn();
+        });
+
+    });
+
+</script>
+
+<%}%>
+
+

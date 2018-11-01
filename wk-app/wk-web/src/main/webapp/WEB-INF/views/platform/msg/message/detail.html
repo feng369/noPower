@@ -1,0 +1,68 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">系统消息</a>
+                        <!--<small>${obj.id}</small>-->
+                    </div>
+                </header>
+                <div class="list-group">
+                    <table class="table table-bordered table-striped mg-t datatable">
+                        <tbody>
+                                                        <!--<tr>-->
+                                <!--<td>${msg['msg.message.column.type']}</td><td>${obj.type}</td>-->
+                            <!--</tr>-->
+                                                        <!--<tr>-->
+                                <!--<td>${msg['msg.message.column.bizType']}</td><td>${obj.bizType}</td>-->
+                            <!--</tr>-->
+                                                        <!--<tr>-->
+                                <!--<td>${msg['msg.message.column.state']}</td><td>${obj.state}</td>-->
+                            <!--</tr>-->
+                                                        <tr>
+                                <td>${msg['msg.message.column.priority']}</td><td><% if(obj.priority=='1'){%>中<%}else if(obj.priority=='0'){%>低<%}else if(obj.priority=='2'){%>高<%}%></td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.message.column.title']}</td><td>${obj.title}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.message.column.body']}</td><td>${obj.body}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['msg.message.column.receivetime']}</td><td>${obj.receivetime}</td>
+                            </tr>
+                                                        <!--<tr>-->
+                                <!--<td>${msg['msg.message.column.receiverId']}</td><td>${obj.receiverId}</td>-->
+                            <!--</tr>-->
+                                                        <tr>
+                                <td>${msg['msg.message.column.senderId']}</td><td>${obj.sender.username!}</td>
+                            </tr>
+                                                        <!--<tr>-->
+                                <!--<td>${msg['msg.message.column.airportId']}</td><td>${obj.airportId}</td>-->
+                            <!--</tr>-->
+                                                        <!--<tr>-->
+                                <!--<td>${msg['msg.message.column.sourceid']}</td><td>${obj.sourceid}</td>-->
+                            <!--</tr>-->
+                                                        <!--<tr>-->
+                                <!--<td>${msg['msg.message.column.linkUrl']}</td><td>${obj.linkUrl}</td>-->
+                            <!--</tr>-->
+                                                        <!--<tr>-->
+                                <!--<td>${msg['msg.message.column.extParam']}</td><td>${obj.extParam}</td>-->
+                            <!--</tr>-->
+                                                        <!--<tr>-->
+                                <!--<td>${msg['msg.message.column.creater']}</td><td>${obj.creater}</td>-->
+                            <!--</tr>-->
+                                                        <!--<tr>-->
+                                <!--<td>${msg['msg.message.column.createTime']}</td><td>${obj.createTime}</td>-->
+                            <!--</tr>-->
+                                                    </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">${msg['globals.button.ok']}</button>
+</div>

@@ -1,0 +1,47 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">eq_useinfo</a>
+                        <small>${obj.id}</small>
+                    </div>
+                </header>
+                <div class="list-group">
+                    <table class="table table-bordered table-striped mg-t datatable">
+                        <tbody>
+                                                        <tr>
+                                <td>${msg['eq.useinfo.column.equsenum']}</td><td>${obj.equsenum}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['eq.useinfo.column.eqid']}</td><td>${obj.eqid}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['eq.useinfo.column.personid']}</td><td>${obj.personid}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['eq.useinfo.column.personunitid']}</td><td>${obj.personunitid}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['eq.useinfo.column.equnitid']}</td><td>${obj.equnitid}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['eq.useinfo.column.starttime']}</td><td>${obj.starttime}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['eq.useinfo.column.endtime']}</td><td>${obj.endtime}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['eq.useinfo.column.pstatus']}</td><td>${obj.pstatus}</td>
+                            </tr>
+                                                    </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">${msg['globals.button.ok']}</button>
+</div>

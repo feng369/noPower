@@ -1,0 +1,120 @@
+<input name="id" type="hidden" value="${sysRegistaudit.id!}">
+<input name="way" type="hidden" value="${sysRegistaudit.way!}">
+                                <div class="row mb10">
+                                    <div class="col-lg-12">
+                                        <!--<div style="width: 100%;border-bottom: 1px solid #C9C5C5;opacity: 0.6  ">注册信息</div><br>-->
+                                        <div class="form-group">
+                                            <label for="loginname" class="col-sm-2 control-label">用户名称</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" id="loginname" class="form-control"
+                                                       placeholder="用户名称" value="${sysUser.loginname!}" readonly>
+                                            </div>
+                                            <label for="username" class="col-sm-2 control-label">真实姓名</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" id="username" class="form-control"
+                                                       placeholder="真实姓名" value="${sysUser.username!}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tel" class="col-sm-2 control-label">联系电话</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" id="tel" class="form-control"
+                                                       placeholder="联系电话" value="${sysUseradd.tel!}" readonly>
+                                            </div>
+                                            <label for="unitName" class="col-sm-2 control-label">单位名称</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" id="unitName" class="form-control"
+                                                       placeholder="单位名称" value="${sysUnit.name!}" readonly>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="airportname" class="col-sm-2 control-label">机场名称</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" id="airportname" class="form-control"
+                                                       placeholder="机场名称" value="${baseAirport.airportname!}" readonly>
+                                            </div>
+                                            <label for="jobs" class="col-sm-2 control-label">职位</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" id="jobs" class="form-control"
+                                                       placeholder="职位" value="${sysUseradd.jobs!}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="cardid" class="col-sm-2 control-label">员工证件号</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" id="cardid" class="form-control"
+                                                       placeholder="证件号" value="${sysUseradd.cardid!}" readonly>
+                                            </div>
+                                           <!-- <label for="pictureads" class="col-sm-2 control-label">员工图片</label>
+                                            <div class="col-xs-4" >
+                                                <a class="img-thumbnail">
+                                                    <img src="/upload/userPhoto/${sysUseradd.pictureads!}" id="pictureads" class="form-control img-circle"
+                                                         alt="员工图片" style="height:100px;width:100px;cursor: pointer;" data-action="zoom">
+                                                </a>
+                                            </div>-->
+                                            <label class="col-sm-2 control-label">员工图片</label>
+                                            <div class="col-xs-4 zoom" id="zoom">
+                                                <img src="/upload/userPhoto/${sysUseradd.pictureads!}" id="pictureads" alt="员工图片" style=" width: 100px;
+        height: 100px;" data-action="zoom">
+
+                                            </div>
+                                        </div>
+                                        <!--选择员工-->
+                                        <div class="form-group">
+                                            <label for="pid" class="col-sm-2 control-label">${msg['base.cnctobj.column.personId']}</label>
+
+                                            <div class="col-sm-6">
+                                                <div class="input-group">
+                                                    <input id="pid" type="text" class="form-control" placeholder="${msg['base.cnctobj.column.personId']}" disabled
+                                                           value="<%if(!isEmpty(obj)){%>${obj.name}<%}%>" data-parsley-required="true"/>
+
+                                                    <span class="input-group-btn">
+			                             			<a class="btn btn-primary" data-toggle="modal" href="${base}/platform/sys/registaudit/selectPerson?personname=${sysUser.username!}"
+                                                       data-target="#dialogPersonSelect"><i class="ti-plus"></i>选择
+                                                    </a>
+			                             		</span>
+                                                </div>
+                                                <input type="hidden" id="personId" name="personId" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="roleName" class="col-sm-2 control-label">分配角色</label>
+                                            <div class="col-sm-2">
+                                                <select id="roleName"  data-parsley-required="true" class="form-control" name="roleCode">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    <option value="JW" >机务</option>
+                                                    <option value="leader" >领导</option>
+                                                </select>
+                                                <span id = "roleInfo" style="color: red" hidden>请分配角色</span>
+                                            </div>
+                                        </div>
+                                        <div style="width: 100%;border-bottom: 1px solid #C9C5C5;opacity: 0.6  ">审核信息</div><br>
+                                    </div>
+                                </div>
+    <div class="col-lg-3"></div>
+    <div id="dialogPersonSelect" class="modal fade bs-modal-sm" tabindex="-4" role="dialog"         aria-hidden="true">
+    <div class="modal-dialog" style="width: 700px;">
+        <div class="modal-content" style="width: 700px;">
+
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+$(function () {
+    var roleCode = "${sysRegistaudit.roleCode!}";
+    var indexObj = $("#roleName option:selected");
+    if(roleCode && roleCode != "" && indexObj.val() != roleCode){
+        indexObj.prop("selected",false);
+        $("#roleName option[value="+roleCode+"]").prop("selected",true);
+    }
+    $("#dialogPersonSelect").on("hidden.bs.modal", function () {
+
+        $("#pid").val(personObj[0].personname);
+        $("#personId").val(personObj[0].id);
+        //alert($("#userId").val());
+        $(this).removeData("bs.modal");
+    });
+});
+</script>

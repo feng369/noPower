@@ -1,0 +1,49 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">${obj.username!}</a>
+                        <small>${obj.username}  [${obj.loginname!}]</small>
+                    </div>
+                </header>
+                <% if(@userRoles.size()>0){ %>
+                <table id="menuTreeTable" class="table no-m">
+                    <thead>
+                    <tr>
+                        <th class="col-md-2">角色名称</th>
+                        <th class="col-md-2">权限标识</th>
+                        <th class="col-md-2">所属组织</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <%
+                    for(role in userRoles) {
+                    %>
+
+                    <tr >
+                        <td>${role.name!}</td>
+                        <td>${role.code!}</td>
+                        <td>${role.unit.name!}</td>
+                    </tr>
+                    <%
+                    }%>
+
+                    </tbody>
+                </table>
+                <% }else{ %>
+
+                <div class="p10">
+                    <div class="alert alert-warning">
+                        此用户没有分配角色权限。
+                    </div>
+                </div>
+                <% } %>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">知道了</button>
+</div>

@@ -1,0 +1,154 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/msg/assign" id="goBack" data-pjax><i class="ti-angle-left"></i>${msg['globals.button.back']}</a>
+    </div>
+</header>
+
+<div class="content-wrap">
+    <div class="wrapper" style="min-height:500px;">
+        <section class="panel panel-form">
+            <form id="editForm" role="form" class="form-horizontal parsley-form" data-parsley-validate
+                  action="${base}/platform/msg/assign/editDo" method="post">
+                <input name="id" type="hidden" value="${obj.id}">
+                <div class="row mb10">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label for="bizObject" class="col-sm-2 control-label">${msg['msg.assign.column.bizObject']}</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="bizObject" class="form-control" name="bizObject" data-parsley-required="true"
+                                       placeholder="${msg['msg.assign.column.bizObject']}" value="${obj.bizObject}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="bizObjectId" class="col-sm-2 control-label">${msg['msg.assign.column.bizObjectId']}</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="bizObjectId" class="form-control" name="bizObjectId" data-parsley-required="true"
+                                       placeholder="${msg['msg.assign.column.bizObjectId']}" value="${obj.bizObjectId}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="title" class="col-sm-2 control-label">${msg['msg.assign.column.title']}</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="title" class="form-control" name="title" data-parsley-required="true"
+                                       placeholder="${msg['msg.assign.column.title']}" value="${obj.title}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="body" class="col-sm-2 control-label">${msg['msg.assign.column.body']}</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="body" class="form-control" name="body" data-parsley-required="true"
+                                       placeholder="${msg['msg.assign.column.body']}" value="${obj.body}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="state" class="col-sm-2 control-label">${msg['msg.assign.column.state']}</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="state" class="form-control" name="state" data-parsley-required="true"
+                                       placeholder="${msg['msg.assign.column.state']}" value="${obj.state}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="endtime" class="col-sm-2 control-label">${msg['msg.assign.column.endtime']}</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="endtime" class="form-control" name="endtime" data-parsley-required="true"
+                                       placeholder="${msg['msg.assign.column.endtime']}" value="${obj.endtime}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="starttime" class="col-sm-2 control-label">${msg['msg.assign.column.starttime']}</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="starttime" class="form-control" name="starttime" data-parsley-required="true"
+                                       placeholder="${msg['msg.assign.column.starttime']}" value="${obj.starttime}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="accepttime" class="col-sm-2 control-label">${msg['msg.assign.column.accepttime']}</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="accepttime" class="form-control" name="accepttime" data-parsley-required="true"
+                                       placeholder="${msg['msg.assign.column.accepttime']}" value="${obj.accepttime}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="performerUserId" class="col-sm-2 control-label">${msg['msg.assign.column.performerUserId']}</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="performerUserId" class="form-control" name="performerUserId" data-parsley-required="true"
+                                       placeholder="${msg['msg.assign.column.performerUserId']}" value="${obj.performerUserId}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="performerPersonId" class="col-sm-2 control-label">${msg['msg.assign.column.performerPersonId']}</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="performerPersonId" class="form-control" name="performerPersonId" data-parsley-required="true"
+                                       placeholder="${msg['msg.assign.column.performerPersonId']}" value="${obj.performerPersonId}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="senderId" class="col-sm-2 control-label">${msg['msg.assign.column.senderId']}</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="senderId" class="form-control" name="senderId" data-parsley-required="true"
+                                       placeholder="${msg['msg.assign.column.senderId']}" value="${obj.senderId}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="linkUrl" class="col-sm-2 control-label">${msg['msg.assign.column.linkUrl']}</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="linkUrl" class="form-control" name="linkUrl" data-parsley-required="true"
+                                       placeholder="${msg['msg.assign.column.linkUrl']}" value="${obj.linkUrl}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="creater" class="col-sm-2 control-label">${msg['msg.assign.column.creater']}</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="creater" class="form-control" name="creater" data-parsley-required="true"
+                                       placeholder="${msg['msg.assign.column.creater']}" value="${obj.creater}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="createTime" class="col-sm-2 control-label">${msg['msg.assign.column.createTime']}</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="createTime" class="form-control" name="createTime" data-parsley-required="true"
+                                       placeholder="${msg['msg.assign.column.createTime']}" value="${obj.createTime}" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3"></div>
+                <div class="col-lg-6">
+                    <div class="form-group text-center">
+                        <label></label>
+
+                        <div>
+                            <button class="btn btn-primary btn-block btn-lg btn-parsley" data-loading-text="${msg['globals.button.submit.tip']}">${msg['globals.button.submit']}</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+    </div>
+</div>
+<script language="JavaScript">
+    $(document).ready(function () {
+        $('#editForm').ajaxForm({
+            dataType: 'json',
+            beforeSubmit: function (arr, form, options) {
+                form.find("button:submit").button("loading");
+            },
+            success: function (data, statusText, xhr, form) {
+                if (data.code == 0) {
+                    Toast.success(data.msg);
+                    setTimeout(function () {
+                        $("#goBack").trigger("click");
+                    }, 1000);
+                } else {
+                    Toast.error(data.msg);
+                }
+                form.find("button:submit").button("reset");
+            }
+        });
+    });
+</script>
+<%}%>

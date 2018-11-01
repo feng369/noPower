@@ -1,0 +1,171 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<style>
+    @-moz-keyframes myMove {
+        0% {padding-top:30px;}
+        100% {padding-top:50px;}
+    }
+    @-webkit-keyframes myMove {
+        0% {padding-top:30px;}
+        100% {padding-top:50px;}
+    }
+    @-o-keyframes myMove {
+        0% {padding-top:30px;}
+        100% {padding-top:50px;}
+    }
+    @keyframes myMove {
+        0% {padding-top:30px;}
+        100% {padding-top:50px;}
+    }
+    #down {
+        text-align: center;
+        height: 150px;
+        -moz-animation: myMove 1s linear infinite alternate;
+        -webkit-animation: myMove 1s linear infinite alternate;
+        -o-animation: myMove 1s linear infinite alternate;
+        animation: myMove 1s linear infinite alternate;
+    }
+</style>
+<header class="header navbar bg-white shadow">
+    <div class="btn-group tool-button">
+        <a class="btn btn-primary navbar-btn" href="${base}/platform/eq/materiel" id="goBack" data-pjax><i class="ti-angle-left"></i> ${msg['globals.button.back']}</a>
+    </div>
+</header>
+<div class="content-wrap" >
+    <div class="wrapper" style="min-height:500px;">
+        <section class="panel panel-form" >
+            <div class="container" >
+                <div class="main">
+                    <ul class="cbp_tmtimeline" id="ul">
+
+                    </ul>
+                    <div id="down">
+                        <canvas id="downCanvas" width="50" height="50" onclick="getDataList()">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script language="JavaScript">
+    var lockid,position,username,operatetime,power,repStatus,unitname;
+    var acl="cbp_tmicon2";
+    var tel="cbp_tmlabel1";
+    var tmtime = "cbp_tmtime1";
+    var tdata,time
+    var eqid = "${id!}";
+    var pageNo=0,pageSize,totalCount;
+
+    $(document).ready(function () {
+        $('#ul').html("");
+        getDataList();
+        drawDown();
+    })
+
+    function getDataList(){
+        pageNo = pageNo+1;
+        $.post("${base}/platform/eq/materiel/getEqTraceList", {"eqid":eqid,"pageNumber":pageNo}, function (res) {
+            console.debug(res)
+            pageNo = res.pageNo;
+            pageSize = res.pageSize;
+            totalCount = res.totalCount;
+            var data = res.list;
+            if(data.length<pageSize || pageSize*pageNo>=totalCount){
+                $('#down').hide();
+            }
+
+            data.forEach(function(data) {
+                if(data.lockid){
+                    lockid = data.lockid
+                }else{
+                    lockid   =""
+                }
+                if(data.position){
+                    position    = data.position
+                }else{
+                    position =""
+                }
+                if(data.power){
+                    power    = data.power
+                }else{
+                    power =""
+                }
+
+                if(data.time){
+                    var ntime = data.time.replace(/\-/g, "/");//兼容Safari浏览器的日期格式
+                    tdata= new Date(ntime).format("yyyy-MM-dd");
+                    time=new Date(ntime).format("hh:mm:ss");
+                    operatetime= data.time
+                }else{
+                    operatetime  =""
+                    tdata ="未开始";
+                }
+                //锁状态
+                if(data.lockstate == "0"){
+                    acl="cbp_tmicon2";
+                    tel="cbp_tmlabel1";
+                    repStatus = "开锁中";
+                }else if(data.lockstate == "1"){
+                    acl="cbp_tmicon1";
+                    tel="cbp_tmlabel2";
+                    repStatus = "关锁中";
+                }else{
+                    acl="cbp_tmicon1";
+                    tel="cbp_tmlabel2";
+                    repStatus = "<未知>";
+                }
+                if(data.username){
+                    username     = data.username
+                }else{
+                    username =""
+                }
+                if(data.unitname){
+                    unitname = data.unitname
+                }else{
+                    unitname =""
+                }
+
+                var temp="<li>" +
+                    "<time class='"+tmtime+"' datetime='"+operatetime+"'><span>"+tdata+"</span><span>"+time+"</span></time>" +
+                    "<i class='"+acl+" ti-time' ></i> <div class='"+tel+"'> " +
+                    "<h2>"+repStatus+"&#9;&#9;&#9;&#9;"+lockid+"</h2> " +
+                    "<div>电量:&nbsp;&nbsp;&nbsp;&nbsp;"+power+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>" +
+                    "<div>地理位置:&nbsp;&nbsp;&nbsp;&nbsp;"+position+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>" +
+                    (( data.lockstate == "0") ?
+                        "<div>使用人:&nbsp;&nbsp;&nbsp;&nbsp;"+username+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>" +
+                        "<div>使用单位:&nbsp;&nbsp;&nbsp;&nbsp;"+unitname+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>"
+                        :"");
+                $('#ul').append(temp);
+            });
+        }, "json");
+    }
+
+
+    function drawDown() {
+        var c = document.getElementById("downCanvas"),
+            cxt = c.getContext("2d");
+        cxt.beginPath();
+        cxt.moveTo(5, 20);
+        cxt.lineTo(25, 45);
+        cxt.lineTo(45, 20);
+        cxt.lineWidth = 5;
+        cxt.strokeStyle = "gray";
+        cxt.lineCap = 'round';
+        cxt.lineJoin = "round";
+        cxt.stroke();
+        cxt.moveTo(5, 5);
+        cxt.lineTo(25, 30);
+        cxt.lineTo(45, 5);
+        cxt.lineWidth = 5;
+        cxt.strokeStyle = "gray";
+        cxt.lineCap = 'round';
+        cxt.lineJoin = "round";
+        cxt.stroke();
+    }
+
+
+</script>
+<%}%>

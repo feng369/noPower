@@ -1,0 +1,234 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<section class="content-wrap bg-white">
+    <header class="header navbar bg-white shadow">
+        <div class="btn-group tool-button">
+           <!-- <a id="add" class="btn btn-primary navbar-btn" href="${base}/platform/eq/use/add" data-pjax><i class="ti-plus"></i> ${msg['globals.button.add']}</a>-->
+           <!-- <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> ${msg['globals.button.delete.more']}</button>-->
+        </div>
+    </header>
+    <div class=panel-body style="padding-top: 50px;">
+        <div class="table-responsive no-border">
+            <table class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                    <tr>
+                        <th>桩位</th>
+                        <th>设备名称</th>
+                        <th>设备所属单位</th>
+                        <th>当前使用人</th>
+                        <th>当前使用人单位</th>
+                        <th>状态</th>
+                        <th>开始借用时间</th>
+                        <th>${msg['globals.table.column.operation']}</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</section>
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">${msg['globals.button.delete']}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        ${msg['globals.button.delete.notice']}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">${msg['globals.button.cancel']}</button>
+                <button id="okDel" type="button" class="btn btn-primary" data-loading-text="${msg['globals.button.delete.tip']}">${msg['globals.button.confirm']}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    var datatable;
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/${lang}.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/platform/eq/use/data",
+                "type": "post",
+                "data": function (d) {
+
+                },
+            },
+            "order": [[5, "asc"]],
+            "columns": [
+                    {"data": "stakeid", "bSortable": true,"render": function (data, type, row, meta) {
+                        // return row.eqStake?row.eqStake.stakename:"";
+                        return row.stakename ?row.stakename:"";
+                    }},
+                    {"data": "eqid", "bSortable": true,"render": function (data, type, row, meta) {
+                            // return row.eqname? row.eqname + "["+row.eqnum+"]" :"";
+                            return (row.eqnum?row.eqnum:"")+"--"+(row.eqname? row.eqname :"");
+                        }},
+                    {"data": "equnitid", "bSortable": true,"render": function (data, type, row, meta) {
+                            return row.suname?row.suname :"";
+                    }},
+                    {"data": "", "bSortable": false,"render": function (data, type, row, meta) {
+                            // return row.eqUseinfo ? getPersonname(row.eqUseinfo.personid):"";
+                        return row.username ? row.username : "";
+                    }},
+                    {"data": "", "bSortable": false,"render": function (data, type, row, meta) {
+                            // return row.eqUseinfo ? getPersonunit(row.eqUseinfo.personid) : "";
+                        return row.suiname ? row.suiname:"";
+                    }},
+                    {"data": "ustatus", "bSortable": true,"render": function (data, type, row, meta) {
+                            return data != null || typeof data != "undefined" ? geteqStstus(data) : "";
+                    }},
+                    {"data": "starttime", "bSortable": true,"render": function (data, type, row, meta) {
+                            // return row.eqStake?row.eqStake.stakename:"";
+                            return row.starttime?row.starttime:"";
+                    }}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                                '<li><a href="${base}/platform/eq/use/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">${msg["globals.button.detail"]}</a></li>' +
+                                '</ul></div>';
+                    },
+                    "targets": 7
+                }
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+    function del(id) {
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        dialog.find("#okDel").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/platform/eq/use/delete/" + id, {}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null,false);
+                } else {
+                    Toast.error(data.msg);
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+    function delCheck() {
+        var chks = datatable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(datatable.rows('.selected').data(), function (i, n) {
+                ids.push(n.id);
+            });
+            var dialog = $("#dialogDelete");
+            dialog.modal("show");
+            dialog.find("#okDel").unbind("click");
+            dialog.find("#okDel").bind("click", function (event) {
+                var btn = $(this);
+                btn.button("loading");
+                $.post("${base}/platform/eq/use/delete", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        datatable.ajax.reload(null,false);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                    btn.button("reset");
+                    dialog.modal("hide");
+                }, "json");
+            });
+        } else {
+            Toast.warning("${msg['globals.button.delete.select']}");
+        }
+    }
+
+    function geteqStstus(data){
+        switch(data){
+            case 0:
+                return "借用中";
+            case 1:
+                return "已关锁";
+            case 2:
+                return "借用完毕";
+            default:
+                return "";
+        }
+    }
+    $(function () {
+      /*  $.ajax({
+        });*/
+
+
+    });
+    function getPersonname(data){
+//        alert(data);
+        var name="";
+        $.ajaxSettings.async=false;
+        var url="${base}/platform/sys/user/getUsername";
+        $.post(url,{"userid":data},function(d){
+            if(d){
+                name= d;
+            }
+
+        });
+
+        return name;
+    }
+
+    function getPersonunit(data){
+        var unitname="";
+        $.ajaxSettings.async=false;
+        var url="${base}/platform/sys/user/getUserunit";
+        $.post(url,{"userid":data},function(d){
+
+            if(d&&d.length>0){
+                console.debug(d)
+                if(d[0].name){
+                    unitname = d[0].name;
+                }
+            }
+        });
+        return unitname;
+
+    }
+
+    $(function () {
+        initDatatable();
+        $("#dialogDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+    });
+</script>
+<%}%>

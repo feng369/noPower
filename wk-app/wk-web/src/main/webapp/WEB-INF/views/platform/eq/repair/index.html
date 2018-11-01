@@ -1,0 +1,351 @@
+<%
+layout("/layouts/platform.html"){
+var getEdit=false;
+if(@shiro.hasPermission('platform.eq.repair.edit')){
+    getEdit=true;
+}
+var getDelete=false;
+if(@shiro.hasPermission('platform.eq.repair.delete')){
+    getDelete=true;
+}
+
+%>
+
+
+<section class="content-wrap bg-white">
+    <header class="header navbar bg-white shadow">
+        <!--20180305zhf1531-->
+        <select id="selectStatus" class="navbar-text">
+            <option value="1" selected="selected">报修中</option>
+            <option value="2">维修中</option>
+            <option value="0">已完成</option>
+        </select>
+
+        <div class="btn-group tool-button">
+            <!--<a id="add" class="btn btn-primary navbar-btn" href="${base}/platform/eq/repair/add" data-pjax><i class="ti-plus"></i> ${msg['globals.button.add']}</a>-->
+            <% if(@shiro.hasPermission('platform.eq.repair.complete')){ %>
+            <button class="btn btn-primary navbar-btn" onclick="complete()"><i class="ti-check"></i> 维修完成</button>
+            <%}%>
+        </div>
+        <div class="pull-right offscreen-right">
+            <button class="btn btn-primary navbar-btn" onclick="sublime.toggleFilter('.cd-panel')"><i
+                    class="fa fa-sliders"></i> 筛选
+            </button>
+        </div>
+    </header>
+    <div class=panel-body style="padding-top: 50px;">
+        <div class="table-responsive no-border">
+            <table class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                    <tr>
+                            <th>${msg['eq.repair.column.repnum']}</th>
+                            <th>${msg['eq.repair.column.eqnum']}</th>
+                            <th>${msg['eq.repair.column.eqname']}</th>
+                            <th>${msg['eq.repair.column.pstatus']}</th>
+                            <th>申报人</th>
+                            <th>${msg['eq.repair.column.wxuserid']}</th>
+                            <th>申报日期</th>
+                            <th>${msg['globals.table.column.operation']}</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</section>
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">${msg['globals.button.delete']}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        ${msg['globals.button.delete.notice']}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">${msg['globals.button.cancel']}</button>
+                <button id="okDel" type="button" class="btn btn-primary" data-loading-text="${msg['globals.button.delete.tip']}">${msg['globals.button.confirm']}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<div class="cd-panel from-right">
+    <form id="selectForm">
+        <header class="cd-panel-header">
+            <h4>高级筛选</h4>
+        </header>
+        <div class="cd-panel-container">
+            <div class="cd-panel-content shadow">
+                <div class="form-group">
+                    <label for="repnum">${msg['eq.repair.column.repnum']}</label>
+                    <input type="text" id="repnum" name="repnum" onclick="this.value=''" class="form-control" placeholder="编号" autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="personname">申报人</label>
+                    <input type="text" id="personname" name="personname" onclick="this.value=''" class="form-control" placeholder="申报人">
+                </div>
+                <div class="form-group">
+                    <label for="pstatus">${msg['eq.repair.column.pstatus']}</label>
+                    <div class="select">
+                    <select id="status">
+                        <!--20180305zhf1531-->
+                        <option value="1" selected>报修中</option>
+                        <option value="2">维修中</option>
+                        <option value="0">已完成</option>
+                    </select></div>
+                    <input type="hidden" id="pstatus" name="pstatus" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="eqname">${msg['eq.repair.column.eqname']}</label>
+                    <input type="text" id="eqname" name="eqname" onclick="this.value=''" class="form-control" placeholder="设备名称">
+                </div>
+                <div class="form-group">
+                    <label for="eqnum">${msg['eq.repair.column.eqnum']}</label>
+                    <input type="text" id="eqnum" name="eqnum" onclick="this.value=''" class="form-control" placeholder="设备编号">
+                </div>
+
+                <button id="searchBtn" type="button"  class="btn btn-primary" >查询</button>
+
+                <button id="resetBtn" type="button" class="btn btn-default">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script language="JavaScript">
+    var datatable;
+
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/${lang}.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/platform/eq/repair/data",
+                "type": "post",
+                "data": function (d) {
+                    var arr = $('#selectForm').serialize();
+                    arr= decodeURIComponent(arr,true);//防止中文乱码
+                    arr=DataDeal.formToJson(arr);//转化为json
+                    d.selectForm=arr;
+
+                },
+            },
+            "order": [[5, "desc"]],
+            "columns": [
+                    {"data": "repnum", "bSortable": true,"render": function (data, type, row, meta) {
+                        data = data || "";
+                        if(data == ""){return "";}else{return data;}
+                    }},
+                    {"data": "eqnum", "bSortable": true,"render": function (data, type, row, meta) {
+                        data = data || "";
+                        if(data == ""){return "";}else{return data;}
+                    }},
+                    {"data": "eqname", "bSortable": true,"render": function (data, type, row, meta) {
+                        data = data || "";
+                        if(data == ""){return "";}else{return data;}
+                    }},
+                    {"data": "pstatus", "bSortable": true,"render": function (data, type, row, meta) {
+                        data = data || "";
+                        if(data == "1"){return "报修中";}else if(data=="0"){return "已完成";}else if(data=="2"){return "维修中";}else{return  "草稿";}
+                    }},
+                {"data": "username", "bSortable": true,"render": function (data, type, row, meta) {
+                    data = data || "";
+                    if(data == ""){return "";}else{return data;}
+                }},
+                {"data": "wxname", "bSortable": true,"render": function (data, type, row, meta) {
+                        data = data || "";
+                        if(data == ""){return "";}else{return data;}
+                    }},
+                {"data": "createtime", "bSortable": true,"render": function (data, type, row, meta) {
+                    data = data || "";
+                    if(data == ""){return "";}else{return data;}
+                }}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        var tagEdit = "修 改";
+                        if(row.pstatus=="1"){
+                            tagEdit = "分 配";
+                        }
+                        var editElement='<li><a href="${base}/platform/eq/repair/edit/' + row.id + '" data-pjax>'+tagEdit+'</a></li>';
+                        if(row.pstatus=="2" || row.pstatus=="0" || "${getEdit}"=="false"){
+                            editElement='';
+                        }
+                        editElement=''; //修改和分配功能都放到消息中心处理20180515
+                        var deleteElement='<li class="divider"></li><li><a href="javascript:;" onclick="del(\'' + row.id + '\')">${msg["globals.button.delete"]}</a></li>';
+                        if("${getDelete}"=="false"){
+                            deleteElement='';
+                        }
+                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+
+                                '<li><a href="${base}/platform/eq/repair/trackRecord/' + row.id + '" data-pjax>跟踪记录</a></li>' +
+                                '<li><a href="${base}/platform/eq/repair/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">${msg["globals.button.detail"]}</a></li>' +
+                                editElement +
+                                deleteElement +
+                                '</ul></div>';
+                    },
+                    "targets": 7
+                }
+            ]
+        });
+
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+
+        $("#searchBtn").on('click', function () {
+            console.debug($("#pstatus").val());
+            //20180305zhf1602
+            var indexObj = $("#selectStatus option:selected");
+            if(indexObj.val() != $("#pstatus").val()){
+                indexObj.prop("selected",false);
+                $("#selectStatus option[value='"+$("#pstatus").val()+"']").prop("selected",true);
+            }
+            //console.debug($("#selectStatus option"));
+            datatable.ajax.reload();
+        });
+
+        $("#resetBtn").on('click', function () {
+            $("#repnum").val("");
+            $("#personname").val("");
+            $("#pstatus").val("");
+            $("#status").val("");
+            $("#eqname").val("");
+            $("#eqnum").val("");
+            $("#selectStatus").val("");
+            datatable.ajax.reload();
+        });
+    }
+    function del(id) {
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        dialog.find("#okDel").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/platform/eq/repair/delete/" + id, {}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null,false);
+                } else {
+                    Toast.error(data.msg);
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+    function delCheck() {
+        var chks = datatable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(datatable.rows('.selected').data(), function (i, n) {
+                ids.push(n.id);
+            });
+            var dialog = $("#dialogDelete");
+            dialog.modal("show");
+            dialog.find("#okDel").unbind("click");
+            dialog.find("#okDel").bind("click", function (event) {
+                var btn = $(this);
+                btn.button("loading");
+                $.post("${base}/platform/eq/repair/delete", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        datatable.ajax.reload(null,false);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                    btn.button("reset");
+                    dialog.modal("hide");
+                }, "json");
+            });
+        } else {
+            Toast.warning("${msg['globals.button.delete.select']}");
+        }
+    }
+
+    function complete(){
+        var chks = datatable.rows('.selected').data();
+        if (chks.length == 0) {
+            Toast.warning("请选择一条数据");
+            return;
+        }
+        var ids = [];
+        $.each(datatable.rows('.selected').data(), function (i, n) {
+            ids.push(n.id);
+        });
+        swal("", "确定维修完成吗？", {
+            icon: "warning",		 //"warning" "error" "success" "info"
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete)=>{
+            if(willDelete) {
+                $.post("${base}/platform/eq/repair/complete", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        Toast.success(data.msg);
+                        datatable.ajax.reload(null, false);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                }, "json");
+                //swal("Deleted!", "操作成功", "success");
+            } else {
+                // swal("你已取消该操作!", {
+                //     icon: "info",
+                // });
+                //swal("Cancelled", "你已取消该操作!", "info");
+                throw null;
+        }
+        }).catch(err => {
+                if (err) {
+                    swal("Oh noes!", "The AJAX request failed!", "error");
+                } else {
+                    swal.stopLoading();
+            swal.close();
+        }
+        });
+    }
+
+    $(function () {
+
+        console.debug($("#pstatus").val());
+        initDatatable();
+        $("#dialogDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+    });
+    //20180305zhf1531
+    $("#selectStatus").change(
+       function () {
+           $("#pstatus").val($(this).val());
+           $("#status").val($(this).val());
+           datatable.ajax.reload();
+       }
+    );
+    $("#status").change(function(){
+        $("#pstatus").val($(this).val());
+    });
+</script>
+<%}%>

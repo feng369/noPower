@@ -1,0 +1,63 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">设备明细</a>
+                        <small id="sm"></small>
+                    </div>
+                </header>
+                <div class="list-group">
+                    <table class="table table-bordered table-striped mg-t datatable">
+                        <tbody>
+                                                        <tr>
+                                <td>设备名称</td><td id="eqname"></td>
+                            </tr>
+                                                        <tr>
+                                <td>设备编号</td><td id="eqcode"></td>
+                            </tr>
+                                                        <tr>
+                                <td>所属公司</td><td id="eqcorp"></td>
+                            </tr>
+                                                        <tr>
+                                <td>设备状态</td><td id="pstatus"></td>
+                            </tr>
+                                                        <!--<tr>-->
+                                                            <!--<td>设备状态</td><td>234</td>-->
+                                                        <!--</tr>-->
+
+                                                    </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">${msg['globals.button.ok']}</button>
+</div>
+<script>
+    $(document).ready(function () {
+//        getData();
+//        $("#ps").html("${obj.id}");
+//        $("#opAt").html(dataformatint("${obj.opAt}"));
+
+        var id="${obj.id}";
+        var url="${base}/platform/eq/use/getData";
+        $.post(url,{"id":id},function(d){
+            if(d){
+                if(d.length>0){
+                    $("#eqname").html(d[0].eqMateriel.eqname);
+                    $("#eqcode").html(d[0].eqMateriel.eqcode);
+                    $("#eqcorp").html(d[0].sysUnit.name);
+                    $("#pstatus").html(d[0].pstatus=="0"?"未使用":(d[0].pstatus=="1"?"使用中":"锁定"));
+                }
+            }
+        });
+    });
+
+    function getData(){
+
+    }
+</script>

@@ -1,0 +1,189 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<section class="content-wrap bg-white">
+    <header class="header navbar bg-white shadow">
+        <select id="resultStatus" class="navbar-text">
+            <option value="-1" selected>待审核</option>
+            <option value="1" >退回</option>
+            <option value="0">通过</option>
+        </select>
+    </header>
+    <div class=panel-body style="padding-top: 50px;">
+        <div class="table-responsive no-border">
+            <table class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                    <tr>
+                            <th>用户名</th>
+                            <th>真实姓名</th>
+                            <th>性别</th>
+                            <th>证件号</th>
+                            <th>所属单位</th>
+                            <th>所属机场</th>
+                            <th>注册方式</th>
+                            <th>审核结果</th>
+                            <th>${msg['globals.table.column.operation']}</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</section>
+<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    $("#resultStatus").change(function () {
+        $("#resultStatus option:selected").val($(this).val());
+        datatable.ajax.reload();
+    });
+
+
+    var datatable;
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/${lang}.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/platform/sys/registaudit/data",
+                "type": "post",
+                "data": function (d) {
+                    d.result = $("#resultStatus option:selected").val();
+
+                }
+            },
+            "order": [[0, "desc"]],
+            "columns": [
+                    {"data": "loginname", "bSortable": true},
+
+                    {"data": "username", "bSortable": true},
+                    {"data": "sex", "bSortable": true,"render":function     (data, type, row,meta){
+                        console.debug(row.way)
+                        if(row.way == 1){
+                            return "";
+                        }
+                        else if(data == 1){
+                                return "女";
+                            }else if(data == 0){
+                                return "男";
+                            }else{
+                                return "";
+                            }
+                    }},
+                {"data": "cardid", "bSortable": true},
+                {"data": "name", "bSortable": true},
+                {"data": "airportname", "bSortable": true},
+                {"data": "way", "bSortable": true,"render":function     (data, type, row){
+                            if(row){
+                                if(row.way === 0){
+                                    return "手机端";
+                                }else{
+                                    return "web端";
+                                }
+                            }else{
+                                return "";
+                            }
+                        }},
+                    {"data": "result", "bSortable": true,"render":function (data, type, row) {
+                        if(data == -1){
+                            return "待审核";
+                        }else if(data ==1 ){
+                            return "退回";
+                        }else if(data == 0){
+                            return "通过";
+                        }else{
+                            return "";
+                        }
+                    }},
+
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        var detailHref;
+                        var auditHref;
+                        if(row.way == 1){
+                            detailHref = "${base}/platform/sys/registaudit/detail/";
+                            auditHref = "${base}/platform/sys/registaudit/audit/";;
+                        }else{
+                            detailHref = "${base}/platform/sys/registaudit/phonedetail/";
+                            auditHref = "${base}/platform/sys/registaudit/phoneaudit/";
+                        }
+                        if(row.result != -1){
+                           return  '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                            ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                            '<li><a href="' +detailHref+ row.uid +'" data-toggle="modal" data-target="#dialogDetail">查看</a></li>'+
+                            '</div>';
+                        }
+                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                                '<li><a href="'+detailHref + row.uid+'" data-toggle="modal" data-target="#dialogDetail">查看</a></li>'+
+                                // '<li><a href="'+ auditHref + row.uid + '">审核</a></li>'+
+
+                                '</div>';
+                        },
+                    "targets":8
+                },
+            ]
+        });
+
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+
+
+    $(function () {
+
+
+        initDatatable();
+        $("#dialogDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+    });
+
+    function auditCheck() {
+        var chks = datatable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(datatable.rows('.selected').data(), function (i, n) {
+                ids.push(n.id);
+            });
+                var btn = $(this);
+                btn.button("loading");
+                $.post("${base}/platform/base/person/auditDo", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        Toast.success(data.msg);
+                        datatable.ajax.reload(null,false);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                    btn.button("reset");
+                }, "json");
+
+        } else {
+            Toast.warning("请先选择要审核的对象");
+        }
+    }
+</script>
+<%}%>

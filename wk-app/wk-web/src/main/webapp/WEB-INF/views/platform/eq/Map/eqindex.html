@@ -1,0 +1,544 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<style>
+    ::-webkit-scrollbar{
+        width: 7px;
+        height: 7px;
+
+    }
+    ::-webkit-scrollbar-thumb:vertical {
+        background-color: rgba(0,0,0,0.3);
+        border-radius: 7px;
+    }
+    /*::-webkit-scrollbar-track-piece:vertical:decrement {*/
+    /*background-color: rgba(166, 166, 166, 0.4);*/
+    /*width: 14px;*/
+    /*}*/
+    ::-webkit-scrollbar-thumb:vertical:hover {
+        background-color: rgba(0,0,0,0.5);
+        border-radius: 7px;
+    }
+
+    .zw sup {
+        color:#FFFFFF;
+        text-align: center;
+        line-height: 52px;
+        font-size: 14px;
+        width: 38px;
+        height:43px;
+        background-size: cover;
+        display:block;
+        overflow: hidden;
+    }
+    .info {
+        transition: all 0.8s;
+        box-shadow:0px 2px 5px rgba(0,0,0,0.2);
+
+
+    }
+    div.info-top {
+        position: relative;
+        background: url("/assets/img/map/zb1_s.svg") no-repeat 12px #FFFFFF;
+        padding-left: 34px;
+        /*border-radius: 5px 5px 0 0;*/
+    }
+    div.info-top div {
+        color: #9B9B9B;
+        font-size: 16px;
+        line-height: 54px;
+        font-weight: 600;
+        padding:0 14px;
+        margin:0;
+    }
+    div.info-top img {
+        position: absolute;
+        width:12px;
+        height: 12px;
+        top: 18px;
+        right: 18px;
+
+    }
+    div.info-top img:hover {
+        background: url("/assets/img/bvcloud/del.svg") no-repeat;
+        background-size: cover;
+        cursor: pointer;
+    }
+    div.info-middle {
+        /*resize: none;*/
+        /*-webkit-overflow-scrolling: touch;*/
+
+        overflow-y: scroll;
+        overflow-x: hidden;
+        font-size: 14px;
+        color: #666;
+        padding:0 5px 5px 12px;
+        line-height: 16px;
+        border-radius:0 px;
+        background-color: #FFFFFF;
+    }
+    div.info-bottom {
+        background-color: #FFFFFF;
+        height: 0px;
+        width: 100%;
+        clear: both;
+        padding-top: 8px;
+        text-align: center;
+
+    }
+    div.info-bottom img {
+        position: relative;
+        z-index: 104;
+    }
+    /*span {*/
+    /*margin-left: 5px;*/
+    /*font-size: 11px;*/
+    /*}*/
+    .info-middle img {
+        float: left;
+        margin-right: 6px;
+    }
+    .top-side{
+        display:block;
+        padding: 0;
+        background-color: #FFFFFF;
+        height: 58px;
+        margin: 30px 20px 0 20px;
+        /*box-shadow:  0px 2px 4px #E4E4E4;*/
+    }
+    .top-side .h4{
+        padding-left: 20px;
+        padding-top: 8px;
+        font-size: 16px;
+    }
+    .bottom-side{
+        display:block;
+        padding: 0;
+        background-color: #FFFFFF;
+        height: 58px;
+        margin: 0 20px 10px 20px;
+        box-shadow:  0px 2px 4px #E4E4E4;
+        z-index: 2;
+    }
+
+    /*#maps_wrap .top-side ul{*/
+    /*padding-right: 200px;*/
+    /*top: 4px;*/
+    /*display: inline-block;*/
+    /*margin: 0;*/
+    /*}*/
+    #maps_wrap .top-side .map_skins{
+        padding-right: 12px;
+        padding-top: 12px;
+        margin: 0;
+    }
+    #maps_wrap .top-side .map_skins li{
+        display:inline-block;
+        cursor: pointer;
+        box-shadow: none;
+        width: 15px;
+        height: 15px;
+        border-radius: 2px;
+        transition: all 0.3s;
+        opacity:0.6;
+        filter: alpha(opacity=60);
+        position: relative;
+    }
+    #maps_wrap #maps,#maps_wrap #myChart{
+        height:84%;
+        box-shadow: none;
+        background-color: #FFFFFF;
+        background-size: cover;
+        margin: 0px 20px;
+        position: relative;
+        z-index: 1;
+        padding: 0;
+        clear: both;
+    }
+
+    #maps_wrap .top-side .map_skins li:hover{
+        transition: all 0.3s;
+        transform: scale(1.1);
+        opacity:1;
+        filter: alpha(opacity=100);
+    }
+    #maps_wrap .top-side .map_skins li .tooltiptext {
+        visibility: hidden;
+        width:48px;
+        background-color: rgba(0,0,0,0.5);
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 4px;
+        position: absolute;
+        z-index: 1;
+        bottom: 145%;
+        left: 50%;
+        font-size: 12px;
+        margin-left: -24px;
+        margin-top: -35px;
+        opacity: 0;
+        transition: opacity 0.8s;
+        font-weight:normal;
+    }
+
+    #maps_wrap .top-side .map_skins li .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: rgba(0,0,0,0.5) transparent transparent transparent;
+    }
+
+    #maps_wrap .top-side .map_skins li:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+    }
+    #maps_wrap .map_zt li {
+        padding: 0;
+        border: none;
+        margin: 0;
+    }
+
+    #maps_wrap .map_zt li a{
+        padding: 14px 0;
+        border: none;
+        border-radius: 0;
+        margin: 0 14px;
+        cursor: pointer;
+    }
+
+    #container #maps_wrap .map_zt li a .badge {
+        line-height: 12px;
+        font-weight: 400;
+    }
+
+    .iconfont{
+        font-family:"iconfont" !important;
+        font-size:15px;font-style:normal;
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-stroke-width: 0.2px;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    .open_btn,.close_btn{
+        float: right;
+        line-height: 15px;
+        padding: 0;
+        margin: 6px 11px;
+        color: #666;
+    }
+
+    .m1,.m2,.m3,.m4{
+        margin: 6px;
+    }
+</style>
+
+<div class="container-fluid" id="maps_wrap">
+
+    <div class="top-side">
+        <div class="pull-left h4">设备监控</div>
+        <ul class="pull-right map_skins">
+            <li class=" open_btn iconfont icon-quanping1" onclick="openNav()" id="open_btn" style="display: block;"><span class="tooltiptext">放大</span></li>
+            <li class=" close_btn iconfont icon-quxiaoquanping" onclick="closeNav()" id="close_btn" style="display: none;"><span class="tooltiptext">缩小</span></li>
+            <!--<li class=" m1" style="background-color: #1a1a1a" onclick="refresh('dark')" ><span class="tooltiptext">背景1</span></li>-->
+            <!--<li class=" m2" style="background-color: #cbcbcb" onclick="refresh('light')"><span class="tooltiptext">背景2</span></li>-->
+            <!--<li class=" m3" style="background-color: #003bb3" onclick="refresh('blue')"><span class="tooltiptext">背景3</span></li>-->
+            <!--<li class=" m4" style="background-color: #beddd9" onclick="refresh('')"><span class="tooltiptext">背景4</span></li>-->
+        </ul>
+        <!--20180310zhf1149-->
+            <ul class="nav nav-tabs map_zt pull-right " role="tablist" id="borrowStatus">
+                <li role="presentation" class="active"><a href="#nomal" aria-controls="nomal" role="tab" data-toggle="tab" data-key="all" >所有设备 <span class="badge" id="all"  ></span></a></li>
+                <li role="presentation" ><a href="#nomal" aria-controls="nomal" role="tab" data-toggle="tab" data-key="normal" >正常借用中 <span class="badge" id="nomal" ></span></a></li>
+                <li role="presentation"><a href="#warning" aria-controls="warning" role="tab" data-toggle="tab" data-key="warning">电力不足 <span class="badge" id="warning" ></span></a></li>
+                <li role="presentation"><a href="#overtime" aria-controls="overtime" role="tab" data-toggle="tab" data-key="overtime">借用超时 <span class="badge" id="overtime" ></span></a></li>
+                <li role="presentation"><a href="#error" aria-controls="error" role="tab" data-toggle="tab" data-key="error">设备异常 <span class="badge" id="error" ></span></a></li>
+            </ul>
+
+    </div>
+    <div class="row" id="maps">
+    </div>
+    <div class="bottom-side"></div>
+</div>
+
+<script>
+    function openNav() {
+        document.getElementById("maps_wrap").style.height = "100%";
+        document.getElementById("maps_wrap").style.width = "100%";
+        document.getElementById("maps_wrap").style.position = "fixed";
+        document.getElementById("maps_wrap").style.zIndex = "1000";
+        document.getElementById("maps_wrap").style.backgroundColor = "rgba(0,0,0, 0.8)";
+        document.getElementById("maps_wrap").style.transition = "0.3s";
+        document.getElementById("maps_wrap").style.top = "0";
+        document.getElementById("maps_wrap").style.left = "0";
+        document.getElementById("close_btn").style.display = "block";
+        document.getElementById("open_btn").style.display = "none";
+    }
+
+    function closeNav() {
+        document.getElementById("maps_wrap").style.height = "";
+        document.getElementById("maps_wrap").style.width = "";
+        document.getElementById("maps_wrap").style.position = "";
+        document.getElementById("maps_wrap").style.zIndex = "";
+        document.getElementById("maps_wrap").style.backgroundColor = "";
+        document.getElementById("maps_wrap").style.transition = "0.3s";
+        document.getElementById("maps_wrap").style.top = "";
+        document.getElementById("maps_wrap").style.left = "";
+        document.getElementById("open_btn").style.display = "block";
+        document.getElementById("close_btn").style.display = "none";
+    }
+</script>
+
+<script src="http://webapi.amap.com/maps?v=1.4.4&key=de8519526746616cb6dfaed57aee2f17&callback=initMapzw"></script>
+
+<script>
+    getcount();
+    var markers = [];
+    var map;
+    var position ="${obj.position!}";
+    var arr=new Array();
+    arr=position.split(",");
+    function initMapzw () {
+        map= new AMap.Map('maps',{
+            zoom: 14.5,
+            center:[arr[0],arr[1]],
+            rotateEnable:true,
+            viewMode:'3D',
+            pitch:30
+        });
+        map.setRotation(52);
+        map.plugin(["AMap.ToolBar"], function() {
+            map.addControl(new AMap.ToolBar());
+        });
+        map.on('complete', function() {
+
+        });
+
+        // 设置地图显示样式
+        var mapStyle = "${MapStyle}";
+        map.setMapStyle('amap://styles/' + mapStyle);
+        // 设置地图上显示的元素种类，支持bg（地图背景）、point（兴趣点）、road（道路）、building（建筑物）
+        map.setFeatures(["bg","building","road"]);
+    }
+
+    //构建自定义信息窗体
+    function createInfoWindow(title, content) {
+        var info = document.createElement("div");
+        info.className = "info";
+        //可以通过下面的方式修改自定义窗体的宽高
+        info.style.width = "250px";
+        // 定义顶部标题
+        var top = document.createElement("div");
+        var titleD = document.createElement("div");
+        var closeX = document.createElement("img");
+        top.className = "info-top";
+        titleD.innerHTML = title;
+        closeX.src = "${base!}/assets/img/bvcloud/del2.svg";
+        closeX.onclick = closeInfoWindow;
+        top.appendChild(titleD);
+        top.appendChild(closeX);
+        info.appendChild(top);
+        // 定义中部内容
+        var middle = document.createElement("div");
+        middle.className = "info-middle";
+        middle.style.backgroundColor = 'white';
+        middle.innerHTML = content;
+        info.appendChild(middle);
+        // 定义底部内容
+        var bottom = document.createElement("div");
+        bottom.className = "info-bottom";
+        bottom.style.position = 'relative';
+        bottom.style.top = '0px';
+        bottom.style.margin = '0 auto';
+        var sharp = document.createElement("img");
+        sharp.src = "${base!}/assets/img/map/sharp.svg";
+        bottom.appendChild(sharp);
+        info.appendChild(bottom);
+        return info;
+    }
+
+    //关闭信息窗体
+    function closeInfoWindow() {
+        map.clearInfoWindow();
+    }
+
+
+    var markers = [];
+    function getcount() {
+        $.post("${base}/platform/eq/use/getusecount", {key:"normal"}, function (data) {
+            $('#nomal').html(data);
+        });
+        $.post("${base}/platform/eq/use/getusecount", {key:"all"}, function (data) {
+            $('#all').html(data);
+        });
+        $.post("${base}/platform/eq/use/getusecount", {key:"warning"}, function (data) {
+            $('#warning').html(data);
+        });
+        $.post("${base}/platform/eq/use/getusecount", {key:"overtime"}, function (data) {
+            $('#overtime').html(data);
+        });
+        $.post("${base}/platform/eq/use/getusecount", {key:"error"}, function (data) {
+            $('#error').html(data);
+        });
+    }
+
+    function refresh(enName) {
+        map.setMapStyle('amap://styles/'+enName);
+    }
+    //20180311zhf1410
+    var key; //显示设备类型
+    var MapRef= "${MapRef!}";
+    //周期性刷新时间
+    setInterval(function (){
+        map.remove(markers);
+        getcount();
+        getPositionByStatus(key);
+    },1000*MapRef);
+
+    //20180310zhf1147
+    $("#borrowStatus li a").click(function () {
+        map.remove(markers);
+        key = $(this).data("key");
+        if(key) {
+            getPositionByStatus(key);
+        }
+    });
+
+    //20180310zhf1216
+    function getPositionByStatus(key){
+        //传入的状态参数
+        var params = {};
+        params.key=key;
+        //加载设备位置(带参数)
+        $.post("${base}/platform/eq/use/getposition",params, function (data){
+            if(data){
+                data.forEach(function(ele){
+                    var thisPosition = ele.position;
+                    if(thisPosition){
+                        var useid =ele.id;//设备id
+                        var eqnum="";//设备编码
+                        var eqname="";//设备名称
+                        var title = "";
+                        var pstatus =  ele.pstatus;
+                        var errstatus = ele.errstatus;
+                        var bizstatus = ele.bizstatus;
+                        var img = getImgByStatus(pstatus,errstatus,bizstatus);
+                        var content = [];
+                        var place =ele.position.split(",");
+                        var marker=new AMap.Marker({
+                            map: map,
+                            extData:{useid:useid},
+                            position: place,
+                            content: '<div class="marker-route marker-marker-bus-from"><div class="zw" align="center" style="background: url('+img+') center no-repeat; background-size: cover; width: 38px;height: 43px"></div></div>',  //自定义点标记覆盖物内容
+                        });
+                        AMap.event.addListener(marker, 'click', function() {
+                            map.clearInfoWindow();
+                            content=[];
+                            $.post("${base}/platform/eq/use/getequseinfo", {useid:marker.getExtData().useid}, function (data) {
+                                console.debug(data);
+                                var username = ""
+                                var userunit = ""
+                                var starttime = ""
+                                if (typeof(data.eqUseinfo) != "undefined") {
+                                    if (typeof(data.eqUseinfo.sysUser) != "undefined") {
+                                        username = data.eqUseinfo.sysUser.username;
+                                    }
+                                    if (typeof(data.eqUseinfo.sysUnit) != "undefined") {
+                                        userunit = data.eqUseinfo.sysUnit.name;
+                                    }
+                                    starttime = data.eqUseinfo.starttime
+
+                                }
+                                content.push("<div>桩位编码:" + data.eqStake.stakenum + "</div>");
+                                content.push("<div>设备编码:" + data.eqMateriel.eqnum + "</div>");
+                                content.push("<div>设备名称:" + data.eqMateriel.eqname + "</div>")
+                                if (data.pstatus == 1) {
+                                    content.push("<div>借用人:" + username + "</div>");
+                                    content.push("<div>借用人所属单位:" + userunit + "</div>");
+                                    content.push("<div>开始使用时间:" + starttime + "</div>");
+                                }
+                                title = getErrorStatus(data.errstatus,data.bizstatus,data.pstatus);
+                                var infoWindow = new AMap.InfoWindow({
+                                    isCustom: true,  //使用自定义窗体
+                                    content: createInfoWindow(title, content.join("<br/>")),
+                                    offset: new AMap.Pixel(16, -45)
+                                });
+                                infoWindow.open(map, marker.getPosition());
+                            });
+                        });
+                        markers.push(marker);
+                    }
+
+                });
+            }
+          }, "json");
+
+    }
+
+    //20180311zhf1453
+    function  getImgByStatus(pstatus,errstatus,bizstatus) {
+        var img;
+        //加载图片
+        if (!key) return;
+        if (key == "all") {
+            if (pstatus == 0 && errstatus == 0 && bizstatus==0) {//正常空闲中
+                img = "/assets/img/map/zb1.svg";
+            } else if (pstatus == 1 && errstatus == 0 && bizstatus==0) {//正常借用中
+                img = "/assets/img/map/c1.svg";
+            } else if (errstatus == 1 && bizstatus==0) {//报警
+                img = "/assets/img/map/c2.svg";
+            } else if (pstatus == 1 && errstatus == 2 && bizstatus==0) {//超时借用
+                img = "/assets/img/map/c3.svg";
+            } else if (errstatus == 4 ||errstatus == 3 || bizstatus==1 || bizstatus==2) {//设备异常
+                img = "/assets/img/map/c4.svg";
+            }
+        }else if(key=="normal"){
+            img = "/assets/img/map/c1.svg";
+        }else if(key=="warning"){
+            img = "/assets/img/map/c2.svg";
+        }else if(key=="overtime"){
+            img = "/assets/img/map/c3.svg";
+        }else if(key=="error"){
+            img = "/assets/img/map/c4.svg";
+        }
+        return img;
+    }
+
+    function getErrorStatus(errstatus,bizstatus,pstatus) {
+        if(bizstatus==1){//异常色
+            return "<span style='color: #D0021B'>设备报修中</span>";
+        }else if(bizstatus==2){//异常色
+            return "<span style='color: #D0021B'>设备维修中</span>";
+        }else if(errstatus==3){//异常色
+            return "<span style='color: #D0021B'>开关状态异常</span>";
+        }else if(errstatus==4){//异常色
+            return "<span style='color: #D0021B'>设备信号失联</span>";
+        }else if(errstatus==1){//预警色
+            return "<span style='color: #FFCC33'>电量不足</span>";
+        }else if(errstatus==2){//预警色
+            return "<span style='color: #FFCC33'>借用超时</span>";
+        }
+
+        if(pstatus == 0){//正常空闲中
+            return "<span style='color: #4A90E2'>空闲中</span>";
+        }else if(pstatus ==1){//正常借用中
+            return "<span style='color: #7ED321'>借用中</span>";
+        }else {
+            return "";
+        }
+    }
+
+    //20180310zhf1249
+    $(function () {
+        key = "all";
+        getPositionByStatus(key);
+    });
+</script>
+
+
+
+<%}%>

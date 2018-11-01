@@ -1,0 +1,43 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">智能锁明细</a>
+
+                    </div>
+                </header>
+                <div class="list-group">
+                    <table class="table table-bordered table-striped mg-t datatable">
+                        <tbody>
+                            <tr>
+                                <td>${msg['eq.lock.column.locknum']}</td><td>${obj.locknum}</td>
+                            </tr>
+                            <tr>
+                                <td>锁编号</td><td>${obj.lockcode!}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['eq.lock.column.lockstatus']}</td><td><%if(obj.lockstatus=='0'){%>空闲
+                                                                                <%}if(obj.lockstatus=='1'){%>使用中
+                                                                                <%}else{%>下线<%}%></td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['eq.lock.column.lockparam']}</td><td>${obj.lockparam}</td>
+                            </tr>
+                            <tr>
+                                <td>所属机场</td><td id="airportname">${obj.airport.airportname}</td>
+                            </tr>
+                            <tr>
+                                <td>${msg['eq.lock.column.describ']}</td><td>${obj.describ}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">${msg['globals.button.ok']}</button>
+</div>

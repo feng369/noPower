@@ -1,0 +1,576 @@
+<%
+layout("/layouts/platform.html"){
+var getSelect=false;
+if(@shiro.hasPermission('platform.eq.materiel.select')){
+    getSelect=true;
+}
+var getEdit=false;
+if(@shiro.hasPermission('platform.eq.materiel.edit')){
+    getEdit=true;
+}
+var getDelete=false;
+if(@shiro.hasPermission('platform.eq.materiel.delete')){
+    getDelete=true;
+}
+var getLock=false;
+if(@shiro.hasPermission('platform.eq.materiel.lock')){
+    getLock=true;
+}
+var getTrace=false;
+if(@shiro.hasPermission('platform.eq.materiel.traceRecord')){
+getTrace=true;
+}
+%>
+<section class="content-wrap bg-white">
+    <header class="header navbar bg-white shadow">
+        <div class="btn-group tool-button">
+            <% if(@shiro.hasPermission('platform.eq.materiel.add')){ %>
+            <a id="add" class="btn btn-primary navbar-btn" href="${base}/platform/eq/materiel/add" data-pjax><i class="ti-plus"></i> ${msg['globals.button.add']}</a>
+            <%}%>
+            <% if(@shiro.hasPermission('platform.eq.materiel.add')){ %>
+            <button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> ${msg['globals.button.delete.more']}</button>
+            <%}%>
+            <% if(@shiro.hasPermission('platform.eq.materiel.stake')){ %>
+            <button id="setStake" class="btn btn-primary navbar-btn" data-toggle="modal" data-target="#dataModal"><i class="ti-map-alt"></i> 分配桩位</button>
+            <button id="relieveStake" class="btn btn-primary navbar-btn" data-toggle="modal"><i class="ti-unlink"></i> 解除桩位</button>
+            <%}%>
+            <% if(@shiro.hasPermission('platform.eq.materiel.live')){ %>
+            <button class="btn btn-primary navbar-btn" onclick="addUsedo()"><i class="ti-export"></i> 上线使用</button>
+            <button class="btn btn-primary navbar-btn" onclick="exitUsedo()"><i class="ti-import"></i> 下线</button>
+            <%}%>
+        </div>
+    </header>
+    <div class=panel-body style="padding-top: 50px;">
+        <div class="table-responsive no-border">
+            <table class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                    <tr>
+                            <th>${msg['eq.materiel.column.eqnum']}</th>
+                            <th>${msg['eq.materiel.column.eqcode']}</th>
+                            <th>${msg['eq.materiel.column.eqname']}</th>
+                            <th>${msg['eq.materiel.column.eqtype']}</th>
+                            <th>${msg['eq.materiel.column.starttime']}</th>
+                            <th>${msg['eq.materiel.column.equnitid']}</th>
+                            <th>${msg['eq.materiel.column.equnitphone']}</th>
+                            <!--<th>${msg['eq.materiel.column.eqfac']}</th>-->
+                            <th>${msg['eq.materiel.column.eqcolor']}</th>
+                            <th>${msg['eq.materiel.column.stakeid']}</th>
+                            <th>${msg['eq.materiel.column.lockid']}</th>
+                            <th>${msg['eq.materiel.column.equsestatus']}</th>
+                            <th>${msg['globals.table.column.operation']}</th>
+
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</section>
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">${msg['globals.button.delete']}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        ${msg['globals.button.delete.notice']}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">${msg['globals.button.cancel']}</button>
+                <button id="okDel" type="button" class="btn btn-primary" data-loading-text="${msg['globals.button.delete.tip']}">${msg['globals.button.confirm']}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogUnbunding" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">解绑</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        是否将此设备与智能锁解除绑定？
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">${msg['globals.button.cancel']}</button>
+                <button id="okUnbunding" type="button" class="btn btn-primary" data-loading-text="解除绑定">${msg['globals.button.confirm']}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<div id="lockDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="dataModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    分配桩位 &nbsp&nbsp<input id="pname" type="text" size="15" style="height: 30px;padding: 6px 12px;font-size: 14px;" onclick="this.value='';" placeholder="请输入编号或名称">
+                </h4>
+
+            </div>
+            <div class="modal-body">
+                <table id="datatable_selectstake" class="table table-bordered table-striped mg-t datatable_selectstake">
+                    <thead>
+                    <tr>
+                        <th>桩位编号</th>
+                        <th>桩位名称</th>
+                        <th>所属机位</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                </button>
+                <button type="button" class="btn btn-primary" onclick="mSubmit()">确定
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<script language="JavaScript">
+    var datatable;
+    var staketable;
+    function selectstake() {
+        staketable = $('#datatable_selectstake').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/cn.json"
+            },
+            "ajax": {
+                "url": "${base}/platform/eq/stake/data",
+                "type": "post",
+                "data": function (d) {
+                    d.name = $("#pname").val();
+                    //20180422zhf1648
+                    d.flag = true; //是否只显示没有绑定设备的桩位
+                }
+            },
+            "order": [[0, "desc"]],
+            "columns": [
+                {"data": "stakenum", "bSortable": true},
+                {"data": "stakename", "bSortable": true},
+                {"data": "seatid", "bSortable": true,"render":function (data, type, row, meta) {
+                       return row.planeseat && row.planeseat.seatname? row.planeseat.seatname:"";
+                    }},
+            ]
+        });
+        staketable.on('click', 'tr', function () {
+            if ($(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            } else {
+                staketable.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+        // $("#name").on('keyup', function () {
+        //     staketable.ajax.reload();
+        // });
+
+        $("#pname").on("input", function () {
+            staketable.ajax.reload();
+        });
+    }
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/${lang}.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/platform/eq/materiel/data",
+                "type": "post",
+                "data": function (d) {
+
+                }
+            },
+            "order": [[0, "desc"]],
+            "columns": [
+                    {"data": "eqnum", "bSortable": true},
+                    {"data": "eqcode", "bSortable": true,"render": function (data, type, row, meta) {
+                        data = data || "";
+                        if(data == ""){return "";}else{return data;}
+                    }},
+                    {"data": "eqname", "bSortable": true},
+                    {"data": "eqtype", "bSortable": true},
+                    {"data": "starttime", "bSortable": true},
+                    {"data": "equnitid", "bSortable": true,"render": function (data, type, row, meta) {
+                        data = data || "";
+                        if(data == "" || !row.unit){return "";}else{return row.unit.name;}
+                    }},
+                    {"data": "equnitphone", "bSortable": true},
+//                    {"data": "eqfac", "bSortable": true},
+                    {"data": "eqcolor", "bSortable": true},
+                    {"data": "stakeid", "bSortable": true,"render": function (data, type, row, meta) {
+                        data = data || "";
+                        if(data == "" || !row.stake){return "";}else{return row.stake.stakename;}
+                    }},
+                    {"data": "lockid", "bSortable": true,"render": function (data, type, row, meta) {
+                        data = data || "";
+                        if(data == ""){return "";}else{return data;}
+                    }},
+                    {"data": "equsestatus", "bSortable": true,"render": function (data, type, row, meta) {
+                        data = data || "";
+                        if(data == 0 ){return "未上线";}else{return "上线";}
+                    }}
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        var selectElement='<li><a href="${base}/platform/eq/materiel/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">${msg["globals.button.detail"]}</a></li>';
+                        if("${getSelect}"=="false"){
+                            selectElement='';
+                        }
+                        var editElement='<li><a href="${base}/platform/eq/materiel/edit/' + row.id + '" data-pjax>${msg["globals.button.update"]}</a></li>';
+                        if("${getEdit}"=="false"){
+                            editElement='';
+                        }
+                        var lockElement='';
+                        if(row && row.equsestatus && row.equsestatus=="0"){
+                            lockElement='<li class="divider"></li>';
+                            lockElement = lockElement+ '<li><a href="${base}/platform/eq/materiel/getlock/' + row.id + '" data-toggle="modal" data-target="#lockDetail">分配智能锁</a></li>';
+                            lockElement = lockElement+ '<li><a href="javascript:;" onclick="unbunding(\''+row.id+'\')">解绑智能锁</a></li>';
+                        }
+                        if("${getLock}"=="false"){
+                            lockElement='';
+                        }
+                        var deleteElement='<li class="divider"></li><li><a href="javascript:;" onclick="del(\'' + row.id + '\')">${msg["globals.button.delete"]}</a></li>';
+                        if("${getDelete}"=="false"){
+                            deleteElement='';
+                        }
+                        var traceElement='<li class="divider"></li><li><a href="${base}/platform/eq/materiel/traceRecord/' + row.id + '" data-pjax>跟踪记录</a></li>';
+                        if("${getTrace}"=="false"){
+                            traceElement='';
+                        }
+
+                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                                selectElement +
+                                editElement +
+                                lockElement+
+                                deleteElement +
+                                traceElement+
+                                '</ul></div>';
+                    },
+                    "targets": 11
+                }
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+    function del(id) {
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        dialog.find("#okDel").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/platform/eq/materiel/delete/" + id, {}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null,false);
+                } else {
+                    Toast.error(data.msg);
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+
+    function unbunding(id){
+        var dialog = $("#dialogUnbunding");
+        dialog.modal("show");
+        dialog.find("#okUnbunding").unbind("click");
+        dialog.find("#okUnbunding").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/platform/eq/materiel/unbunding/", {"id":id}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null,false);
+                } else {
+                    Toast.error(data.msg);
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+
+    function delCheck() {
+        var chks = datatable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(datatable.rows('.selected').data(), function (i, n) {
+                ids.push(n.id);
+            });
+            var dialog = $("#dialogDelete");
+            dialog.modal("show");
+            dialog.find("#okDel").unbind("click");
+            dialog.find("#okDel").bind("click", function (event) {
+                var btn = $(this);
+                btn.button("loading");
+                $.post("${base}/platform/eq/materiel/delete", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        datatable.ajax.reload(null,false);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                    btn.button("reset");
+                    dialog.modal("hide");
+                }, "json");
+            });
+        } else {
+            Toast.warning("${msg['globals.button.delete.select']}");
+        }
+    }
+
+    function addUsedo(){
+        var chks = datatable.rows('.selected').data();
+        if(chks.length == 0){
+            Toast.warning("请选择一条数据");
+            return;
+        }
+        var ids = [];
+        $.each(datatable.rows('.selected').data(), function (i, n) {
+            ids.push(n.id);
+        });
+        swal("", "确定上线待使用吗？",{
+            icon: "warning",		 //"warning" "error" "success" "info"
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete){
+                $.post("${base}/platform/eq/use/useAddOn", {eqid: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        Toast.success(data.msg);
+                        datatable.ajax.reload(null,false);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                }, "json");
+                //swal("Deleted!", "操作成功", "success");
+            } else {
+                // swal("你已取消该操作!", {
+                //     icon: "info",
+                // });
+                //swal("Cancelled", "你已取消该操作!", "info");
+                throw null;
+            }
+        }).catch(err => {
+            if (err) {
+                swal("Oh noes!", "The AJAX request failed!", "error");
+            } else {
+                swal.stopLoading();
+                swal.close();
+            }
+        });
+
+    }
+
+    function exitUsedo() {
+        var chks = datatable.rows('.selected').data();
+        if (chks.length == 0) {
+            Toast.warning("请选择一条数据");
+            return;
+        }
+        var ids = [];
+        $.each(datatable.rows('.selected').data(), function (i, n) {
+            ids.push(n.id);
+        });
+        swal("", "确定设备下线吗？", {
+            icon: "warning",		 //"warning" "error" "success" "info"
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete)=>{
+            if(willDelete) {
+                $.post("${base}/platform/eq/use/useAddOff", {eqid: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        Toast.success(data.msg);
+                        datatable.ajax.reload(null, false);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                }, "json");
+                //swal("Deleted!", "操作成功", "success");
+            } else {
+                // swal("你已取消该操作!", {
+                //     icon: "info",
+                // });
+                //swal("Cancelled", "你已取消该操作!", "info");
+                throw null;
+            }
+        }).catch(err => {
+            if (err) {
+                swal("Oh noes!", "The AJAX request failed!", "error");
+            } else {
+                swal.stopLoading();
+                swal.close();
+            }
+        });
+    }
+
+    $(function () {
+        initDatatable();
+        selectstake();
+        $("#dialogDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+        $("#lockDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+        $("#setStake").on("click",function(){
+            if(datatable.rows('.selected').data().length==0){
+                Toast.warning("请选择一条数据");
+                return false;
+            }
+        });
+        $("#relieveStake").click(function () {
+            swal("", "确定解除桩位吗？", {
+                icon: "warning",		 //"warning" "error" "success" "info"
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete)=>{
+               if(willDelete){
+                   $.ajax({
+                       async:false,
+                       type:"POST",
+                       url:"${base}/platform/eq/materiel/relieveStake",
+                       data:{id:datatable.rows('.selected').data()[0].id},
+                       dataType:"json",
+                       success:function(data) {
+                           if(data.code=="0"){
+                               Toast.success(data.msg);
+                               datatable.ajax.reload();
+                               staketable.ajax.reload();
+                           }else{
+                               Toast.error(data.msg)
+                           }
+                       }
+                   })
+               }else{
+                   throw null;
+                }
+        });
+           /* swal({
+                    title: "确认删除?",
+                    text: "Your will not be able to recover this imaginary file!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "确认",
+                    cancelButtonText: "取消",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                function(isConfirm){
+                    if (isConfirm) {
+                        swal("Deleted!", "Your imaginary file has been deleted.", "success");
+                    } else {
+                        swal("Cancelled", "Your imaginary file is safe :)", "error");
+                    }
+                });*/
+
+
+          /*  swal("", "确定解除桩位吗？",{
+                icon: "warning",		 //"warning" "error" "success" "info"
+                buttons: true,
+                dangerMode: true,
+            }).then(
+               /!* ;*!/
+            )*/
+
+        });
+
+    });
+    function mSubmit(){
+        var stakes = staketable.rows('.selected').data();
+        if (stakes.length > 1) {
+            Toast.warning("只能选择一条");
+        }else if(stakes.length == 0){
+            Toast.warning("请选择一条数据");
+        }else{
+            var stakeid = [];
+            $.each(stakes.rows('.selected').data(), function (i, n) {
+                stakeid.push(n.id);
+            });
+        }
+        var chks = datatable.rows('.selected').data();
+         if(chks.length == 0){
+            Toast.warning("请选择一条数据");
+        }else{
+            var ids = [];
+            $.each(datatable.rows('.selected').data(), function (i, n) {
+                ids.push(n.id);
+            });
+        }
+        //20180307 koudepei 分离分配桩位和上线动作
+        $.post("${base}/platform/eq/materiel/bindStake", {eqid: ids.toString(),stakeid: stakeid[0].toString()}, function (data) {
+            if (data.code == 0) {
+                Toast.success(data.msg);
+                datatable.ajax.reload();
+                staketable.ajax.reload();
+            } else {
+                Toast.error(data.msg);
+            }
+            $("#dataModal").modal("hide");
+        }, "json");
+
+        //
+        // $.post("${base}/platform/eq/use/useaddDo", {eqid: ids.toString(),stakeid: stakeid[0].toString()}, function (data) {
+        //     if (data.code == 0) {
+        //         Toast.success(data.msg);
+        //         datatable.ajax.reload();
+        //     } else {
+        //         Toast.error(data.msg);
+        //     }
+        //     $("#dataModal").modal("hide");
+        // }, "json");
+
+    }
+
+</script>
+<%}%>

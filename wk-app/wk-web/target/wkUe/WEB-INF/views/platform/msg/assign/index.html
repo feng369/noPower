@@ -1,0 +1,225 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<section class="content-wrap bg-white">
+    <header class="header navbar bg-white shadow">
+
+        <select id="selectToDo" class="navbar-text">
+            <option value="0" selected="selected">待办任务</option>
+            <option value="1">已办任务</option>
+        </select>
+
+        <div class="btn-group tool-button">
+            <!--<a id="add" class="btn btn-primary navbar-btn" href="${base}/platform/msg/assign/add" data-pjax><i class="ti-plus"></i> ${msg['globals.button.add']}</a>-->
+            <!--<button class="btn btn-danger navbar-btn" onclick="delCheck()"><i class="ti-close"></i> ${msg['globals.button.delete.more']}</button>-->
+        </div>
+    </header>
+    <div class=panel-body style="padding-top: 50px;">
+        <div class="table-responsive no-border">
+            <table class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                    <tr>
+                            <th width="150">${msg['msg.assign.column.bizObject']}</th>
+                            <!--<th>${msg['msg.assign.column.bizObjectId']}</th>-->
+                            <th>${msg['msg.assign.column.title']}</th>
+                            <!--<th>${msg['msg.assign.column.body']}</th>-->
+                            <!--<th>${msg['msg.assign.column.endtime']}</th>-->
+                            <!--<th>${msg['msg.assign.column.starttime']}</th>-->
+                            <th width="150">${msg['msg.assign.column.accepttime']}</th>
+                            <!--<th>${msg['msg.assign.column.performerUserId']}</th>-->
+                            <!--<th>${msg['msg.assign.column.performerPersonId']}</th>-->
+                            <th width="80">${msg['msg.assign.column.senderId']}</th>
+                            <th width="80">${msg['msg.assign.column.state']}</th>
+                            <!--<th>${msg['msg.assign.column.linkUrl']}</th>-->
+                            <!--<th>${msg['msg.assign.column.creater']}</th>-->
+                            <!--<th>${msg['msg.assign.column.createTime']}</th>-->
+                            <th width="100">${msg['globals.table.column.operation']}</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</section>
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">${msg['globals.button.delete']}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        ${msg['globals.button.delete.notice']}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">${msg['globals.button.cancel']}</button>
+                <button id="okDel" type="button" class="btn btn-primary" data-loading-text="${msg['globals.button.delete.tip']}">${msg['globals.button.confirm']}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript">
+    var datatable;
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/${lang}.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/platform/msg/assign/data",
+                "type": "post",
+                "data": function (d) {
+                    var todo = $("#selectToDo").val();
+                    d.toDo= todo;
+                    if(todo=="0") {
+                        var jsonCon = {};
+                        jsonCon["state"] = [1, 2];
+                        d.condition = JSON.stringify(jsonCon);
+                    }
+
+                }
+            },
+            "order": [[2, "desc"]],
+            "columns": [
+                    {"data": "bizObject", "bSortable": true},
+                    // {"data": "bizObjectId", "bSortable": true},
+                    {"data": "title", "bSortable": true},
+                    // {"data": "body", "bSortable": true},
+                    // {"data": "endtime", "bSortable": true},
+                    // {"data": "starttime", "bSortable": true},
+                    {"data": "accepttime", "bSortable": true},
+                    // {"data": "performerUserId", "bSortable": true},
+                    // {"data": "performerPersonId", "bSortable": true},
+                    {"data": "senderId", "bSortable": true,"render": function (data, type, row, meta) {
+                            data = data || "";
+                            if(data == "" || !row.sender){return "系统";}else{return row.sender.username;}
+                        }},
+                    {"data": "state", "bSortable": true,"render": function (data, type, row, meta) {
+                            data = data || "";
+                            if(data == 0 ){return "未分配";}
+                            else if(data == 1 ){return "待处理";}
+                            else if(data == 2 ){return "处理中";}
+                            else if(data == 3 ){return "已取消";}
+                            else if(data == 4 ){return "已转交";}
+                            else if(data == 9 ){return "已完成";}
+                            else{return "";}
+                        }},
+                    // {"data": "linkUrl", "bSortable": true},
+                    // {"data": "creater", "bSortable": true},
+                    // {"data": "createTime", "bSortable": true},
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        var todo = $("#selectToDo").val();
+                        var tagEdit = "";
+                        if(todo=="0"){
+                            tagEdit = '<li><a href="${base}/platform/msg/assign/handler/'+row.id+'"  data-pjax>处 理</a></li>';
+                            tagEdit = tagEdit+ '<li class="divider"></li>';
+                        }
+                        // else{
+                        //     tagEdit= '<li><a href="${base}' + row.linkUrl.replace(/(.*)audit/,'$1detail') + '" data-toggle="modal" data-target="#dialogDetail">${msg["globals.button.detail"]}</a></li>' ;
+                        // }
+                        if(row.linkViewUrl){
+                            tagEdit = tagEdit+'<li><a href="${base}' + row.linkViewUrl + '" data-toggle="modal" data-target="#dialogDetail">查看单据</a></li>';
+                        }
+                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                                ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                                    tagEdit+
+                                // '<li class="divider"></li>' +
+                                // '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">${msg["globals.button.delete"]}</a></li>' +
+                                '</ul></div>';
+                    },
+                    "targets": 5
+                }
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+    function del(id) {
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        dialog.find("#okDel").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/platform/msg/assign/delete/" + id, {}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null,false);
+                } else {
+                    Toast.error(data.msg);
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+    function delCheck() {
+        var chks = datatable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(datatable.rows('.selected').data(), function (i, n) {
+                ids.push(n.id);
+            });
+            var dialog = $("#dialogDelete");
+            dialog.modal("show");
+            dialog.find("#okDel").unbind("click");
+            dialog.find("#okDel").bind("click", function (event) {
+                var btn = $(this);
+                btn.button("loading");
+                $.post("${base}/platform/msg/assign/delete", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        datatable.ajax.reload(null,false);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                    btn.button("reset");
+                    dialog.modal("hide");
+                }, "json");
+            });
+        } else {
+            Toast.warning("${msg['globals.button.delete.select']}");
+        }
+    }
+    $(function () {
+        initDatatable();
+        $("#dialogDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+
+        $("#selectToDo").change(
+            function () {
+                datatable.ajax.reload();
+            }
+        );
+
+    });
+</script>
+<%}%>

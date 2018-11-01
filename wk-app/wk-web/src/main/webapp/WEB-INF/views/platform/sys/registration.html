@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html class="signin no-js" lang="${lang!}" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="${AppName!}">
+    <meta name="keywords" content="nutz,nutzwk">
+    <title>${AppName!}</title>
+    <link rel="icon" href="${base!}/assets/img/bvcloud/BestVision.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="${base!}/assets/img/bvcloud/BestVision.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="${base!}/assets/plugins/bvcloud/reg.css">
+    <link rel="stylesheet" href="${base!}/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${base!}/assets/css/font-awesome.css">
+    <link rel="stylesheet" href="${base!}/assets/css/themify-icons.css">
+    <link rel="stylesheet" href="${base!}/assets/css/animate.min.css">
+    <link rel="stylesheet" href="${base!}/assets/css/skins/palette.css">
+    <link rel="stylesheet" href="${base!}/assets/css/fonts/font.css">
+    <link rel="stylesheet" href="${base!}/assets/css/main.css">
+
+    <!--[if lt IE 9]>
+    <script src="${base!}/assets/js/html5shiv.js"></script>
+    <script src="${base!}/assets/js/respond.min.js"></script>
+    <script src="${base!}/assets/js/json2.js"></script>
+    <![endif]-->
+    <script src="${base!}/assets/plugins/modernizr.js"></script>
+    <script src="${base!}/assets/plugins/jquery-1.11.1.min.js"></script>
+    <script src="${base!}/assets/js/jquery.pjax.js"></script>
+    <script src="${base!}/assets/js/sso/RSA.js"></script>
+    <script src="${base!}/assets/js/sso/BigInt.js"></script>
+    <script src="${base!}/assets/js/sso/Barrett.js"></script>
+    <script src="${base!}/assets/js/qrcode.js"></script>
+    <script src="${base!}/assets/js/jquery.ajaxupload.js"></script>
+    <script src="${base!}/assets/js/toast.js"></script>
+
+</head>
+
+
+<body id="wrap">
+<div class="reg_logo"></div>
+<div class="con">
+    <h4>用户注册</h4>
+    <ul class="reg_ui">
+        <li class="active" id="basePoint"><span></span>基础信息</li>
+        <li id="personalPoint"><span></span>个人资料</li>
+        <li id="otherPoint"><span></span>其他信息</li>
+        <li id="registPoint"><span></span>注册完成</li>
+    </ul>
+    <div class="clearfix"></div>
+    <!--1.baseInfo-->
+    <div id="baseInfo" class="reg_card row card1" style="display: block">
+        <div class="form-group col-sm-6 ">
+            <label for="recipient-loginname" class="control-label">用户名
+                <small>*</small>
+            </label>
+            <input type="text" required="required" class="form-control" id="recipient-loginname" placeholder="请输入您的用户名">
+            <p id="lblloginname" style="position: absolute"></p>
+        </div>
+
+        <div class="form-group col-sm-6 ">
+            <label for="recipient-name" class="control-label">真实姓名
+                <small>*</small>
+            </label>
+            <input type="text" required="required" class="form-control" id="recipient-name" placeholder="请输入您的姓名">
+            <p id="lblname"></p>
+        </div>
+        <div class="form-group col-sm-6 ">
+            <label for="inputPassword3" class="control-label">密码
+                <small>*</small>
+            </label>
+            <input type="password" required="required" class="form-control" id="inputPassword3" placeholder="请输入8位以上密码">
+            <p id="lblpassword"></p>
+        </div>
+        <div class="form-group col-sm-6 ">
+            <label for="confirmPassword" class="control-label">确认密码
+                <small>*</small>
+            </label>
+            <input type="password" required="required" class="form-control" id="confirmPassword"
+                   placeholder="请再次输入您的密码">
+            <p id="confPassword"></p>
+        </div>
+        <button class="btn_right" id="baseNext">下一步 <i class="ti-arrow-right"></i></button>
+        <button class="btn_com" data-comtype="leaderCom"><i class="ti-check"></i> 立即完成</button>
+    </div>
+
+    <!--2.personalInfo-->
+    <div id="personalInfo" class="reg_card row card2" style="display: none">
+        <div class="form-group col-sm-6 ">
+            <label for="user_number" class="control-label">证件号
+                <small>*</small>
+            </label>
+            <input type="text" class="form-control" id="user_number">
+            <p id="lblnumber" style="position: absolute"></p>
+        </div>
+
+        <div class="form-group col-sm-6 ">
+            <label for="recipient-tel" class="control-label">联系电话
+                <small>*</small>
+            </label>
+            <input type="text" class="form-control" id="recipient-tel" placeholder="请输入联系电话">
+            <p id="lbltel"></p>
+        </div>
+        <div class="form-group col-sm-6">
+            <label for="corp" class="control-label">所属单位</label>
+            <div class="select">
+                <select class="form-control" id="corp">
+                    <!--<option>1</option>-->
+                    <!--<option>2</option>-->
+                    <!--<option>3</option>-->
+                    <!--<option>4</option>-->
+                    <!--<option>5</option>-->
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            <label for="airport" class="control-label">所属机场</label>
+            <div class="select">
+                <select class="form-control" id="airport"><!--获取所属机场-->
+                    <option value="91e6b25e7c9f4e69ac739225f86f8048" selected="selected">昆明长水国际机场</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn_left" id="personalPrev"><i class="ti-arrow-left"></i> 上一步</button>
+        <button class="btn_right" id="personalNext">下一步 <i class="ti-arrow-right"></i></button>
+        <button class="btn_com" id="personalComplete" data-comtype="personalCom"><i class="ti-check"></i> 立即完成</button>
+    </div>
+
+    <!--3.otherInfo-->
+    <div id="otherInfo" class="reg_card row card2" style="display: none">
+        <div class="form-group col-sm-6 ">
+            <label for="wxLoginname" class="control-label">微信账号</label>
+            <input type="text" class="form-control" id="wxLoginname">
+            <p id="wxnumber"></p>
+        </div>
+
+        <div class="form-group col-sm-6">
+            <label for="user_job" class="control-label">职位</label>
+            <input type="text" class="form-control" id="user_job">
+        </div>
+        <div class="form-group col-sm-12">
+            <form id="formFirst" name="upload" enctype="multipart/form-data"
+                  method="post" class="form-horizontal">
+                <label for="up_img" class="control-label"><p style="color: #FF0000">请选择500K以内，png,jpg格式的图片上传</p></label>
+                <ul id="up_img">
+                    <!--src="../../../../assets/img/bvcloud/reg/bg2_int@3x.jpg" -->
+                    <li class="del_upimg" onclick="delImg()"><img id="uimg"/></li>
+                    <li class="add_upimg"><span onclick="selectFile()">+</span>
+                        <input id="up_btn" type="button" value="上传照片" onclick="javascript:uploadall('formFirst')" style="display: none"/>
+                        <input id="ufile" type="file" name="uploads" accept="image/png,image/jpeg"
+                               style="display: none"/>
+                    </li>
+                </ul>
+            </form>
+            <input type="hidden" id="pictureads">
+        </div>
+
+        <button class="btn_left" id="otherPrev"><i class="ti-arrow-left"></i>上一步</button>
+        <button class="btn_right" id="otherNext" data-comtype="otherCom">完成
+            <i class="ti-arrow-right"></i></button>
+        <!-- <button class="btn_com"><i class="ti-check"></i> 立即完成</button>-->
+    </div>
+
+    <!--4.registSuccess-->
+    <div id="registSuccess" class="reg_card row card2" style="display: none">
+        <div class="con">
+            <div class="reg_ok" style="background-color: green"><i class="ti-check"></i></div>
+            <h4 style="color: green">注册成功 !</h4>
+        </div>
+    </div>
+    <div id="registFail" class="reg_card row card2" style="display: none">
+        <div class="con">
+            <div class="reg_ok" style="background-color: red"><i class="ti-close"></i></div>
+            <h4 style="color: red">注册失败!</h4>
+        </div>
+    </div>
+    <!--<div id="registNeedAudit" class="reg_card row card1" style="display: none">
+        <div class="con">
+            <div class="reg_ok"><i class="ti-check"></i></div>
+            <h4>该账号需要审核</h4>
+        </div>
+    </div>-->
+</div>
+<script src="${base!}/assets/bootstrap/js/bootstrap.js"></script>
+<script src="${base!}/assets/plugins/jquery.form.js"></script>
+<script src="${base!}/assets/plugins/parsley.min.js"></script>
+<script src="${base!}/assets/plugins/parsley.zh_cn.js"></script>
+<!--20180409zhf1717-->
+<script type="text/javascript">
+    $(".del_upimg").click(function () {
+        $("#uimg").attr("src", "");
+    });
+    //20180323zhf0951
+    //是否上传了图片
+    var upflag = false;
+    $("#ufile").change(function (e) {
+        $("#uimg").attr("src", URL.createObjectURL(e.target.files[0]));
+    });
+    var rightUpload = true;
+    function uploadall(id) {
+        $("#" + id).ajaxUpload({
+            url: "${base}/platform/sys/user/upload",
+            dataType: 'json',
+            success: function (data, status, xhr) {
+                if (data.result == "上传成功!") {
+                    //将用户图片名称保存到用户表中
+                    upflag = true;
+                    $("#pictureads").val(data.uPhoto);
+             // Toast.success("照片上传成功");
+                    rightUpload = true;
+                } else {
+                        if($("#uimg").attr("src")){
+                            rightUpload = false;
+                            Toast.error("照片上传失败，请使用2M以内jpg、png格式");
+                        }
+                }
+            },
+            error: function (a, b, c) {
+                Toast.error("服务器繁忙，请重试");
+            }
+        });
+    }
+
+    $(function () {
+        //1. 获取公司名称
+        $.post("${base!}/platform/sys/unit/getUnit", {}, function (d) {
+            if (d) {
+                var corp = document.getElementById("corp");
+                for(var i = 0; i < d.length; i++){
+                    var option = document.createElement("option");
+                    option.id = "option" + i;
+                    option.value = d[i].id;
+                    option.innerHTML = d[i].name;
+                    corp.appendChild(option);
+                }
+            }
+        });
+
+        $("#recipient-loginname").val("");
+        $("#inputPassword3").val("");
+        $("#recipient-name").val("");
+        $("#recipient-tel").val("");
+        $("#user_job").val("");
+        $("#user_number").val("");
+        $("#uimg").attr("src", "");
+        $("#confirmPassword").val("");
+        document.getElementById("ufile").value = "";
+    });
+
+    function selectFile() {
+        $("#ufile").trigger("click");
+    }
+
+    //
+    function goToPersonalInfo() {
+        firstPage = false;
+        judgeLeader();
+        $("#personalInfo").removeClass("card2");
+        $("#personalInfo").addClass("card1");
+        $("#personalInfo").css("display", "block");
+        $("#personalPoint").addClass("active");
+
+        $("#baseInfo").removeClass("card1");
+        $("#baseInfo").addClass("card2");
+        $("#baseInfo").css("display", "none");
+    }
+
+    var firstPage = true;
+    var base = "${base!}"
+    //20180409zhf1402
+    var verifyFlag = true;
+    //下一步
+    $("#baseNext").click(function () {
+        textBlur1();
+        baseInfoVerify();
+        if (!verifyFlag) {
+            return;
+        }
+        needAuditFlag = false;
+        firstPage = false;
+        goToPersonalInfo();
+    });
+
+    $("#personalNext").click(function(){
+        nextFlag = true;
+        textBlur();
+        personalInfoVerify();
+        if (!personalFlag) {
+            return;
+        }
+        registRequest();
+        if(msg){
+            //先校验正确了才能出现错误信息
+            if(personalFlag){
+                Toast.error(msg);
+            }
+            return;
+        }
+
+        $("#otherInfo").removeClass("card2");
+        $("#otherInfo").addClass("card1");
+        $("#otherInfo").css("display", "block");
+        $("#otherPoint").addClass("active");
+
+        $("#personalInfo").removeClass("card1");
+        $("#personalInfo").addClass("card2");
+        $("#personalInfo").css("display", "none");
+    });
+    $("#otherNext").click(function () {
+        nextFlag = false;
+        textBlur();
+        $("#up_btn").trigger("click");
+        registRequest($(this).data("comtype"));
+    });
+
+    //上一步
+    $("#personalPrev").click(function () {
+        firstPage = true;
+        $("#personalInfo").removeClass("card1");
+        $("#personalInfo").addClass("card2");
+        $("#personalInfo").css("display", "none");
+        $("#personalPoint").removeClass("active");
+        $("#baseInfo").removeClass("card2");
+        $("#baseInfo").addClass("card1");
+        $("#baseInfo").css("display", "block");
+    });
+    $("#otherPrev").click(function () {
+        $("#otherInfo").removeClass("card1");
+        $("#otherInfo").addClass("card2");
+        $("#otherInfo").css("display", "none");
+        $("#otherPoint").removeClass("active");
+
+        $("#personalInfo").removeClass("card2");
+        $("#personalInfo").addClass("card1");
+        $("#personalInfo").css("display", "block");
+    });
+
+    //立即完成,领导注册
+    $(".btn_com").click(function () {
+        nextFlag = false;
+        var comtype = $(this).data("comtype");
+        registRequest(comtype);
+    });
+
+    //进入注册成功页面
+    function goToRegistSuccess() {
+        $("#basePoint").addClass("active");
+        $("#personalPoint").addClass("active");
+        $("#otherPoint").addClass("active");
+        $("#registPoint").addClass("active");
+        $("#registSuccess").removeClass("card2");
+        $("#registSuccess").addClass("card1");
+        $("#registSuccess").css("display", "block");
+    }
+
+    //进入注册失败页面
+    function goToRegistFail(errMsg) {
+        $("#basePoint").addClass("active");
+        $("#personalPoint").addClass("active");
+        $("#otherPoint").addClass("active");
+        $("#registPoint").addClass("active");
+        $("#registFail h4").html("注册失败!" + errMsg);
+        $("#registFail").removeClass("card2");
+        $("#registFail").addClass("card1");
+        $("#registFail").css("display", "block");
+    }
+
+    //进入需要审核页面
+    function goToRegistNeedAudit() {
+        $("#basePoint").addClass("active");
+        $("#personalPoint").addClass("active");
+        $("#otherPoint").addClass("active");
+        $("#registPoint").addClass("active");
+        $("#registNeedAudit").removeClass("card2");
+        $("#registNeedAudit").addClass("card1");
+        $("#registNeedAudit").css("display", "block");
+    }
+
+
+    //电话号码的正则表达式
+    var r = /^((0\d{2,3}-\d{7,8})|(1[3456789]\d{9}))$/;
+
+
+    //失去焦点时提醒和查重
+    $("#recipient-loginname").on("blur", function (e) {
+        if (this.value.trim().length == 0) {
+            verifyFlag = false;
+            $(this).closest("div").addClass("has-error");
+            $("#lblloginname").html("请填写登录用户名");
+        } else {
+            verifyFlag = true;
+            $(this).closest("div").removeClass("has-error");
+            $("#lblloginname").html("");
+        }
+        var url = "${base!}/platform/sys/user/checkLogin";
+        $.post(url, {"loginname": $("#recipient-loginname").val().trim()}, function (d) {
+            if (d) {
+                if (d == "fail" && $("#recipient-loginname").val().trim().length > 0) {
+                    verifyFlag = false;
+                    $("#recipient-loginname").closest("div").addClass("has-error");
+                    $("#lblloginname").html("已经存在此用户名，请重新填写");
+                } else if (d == "error") {
+                    verifyFlag = true;
+                    $("#lblloginname").html("");
+                    $("#recipient-loginname").closest("div").removeClass("has-error");
+                }
+            } else {
+                verifyFlag = true;
+                $("#lblloginname").html("");
+            }
+        });
+
+    });
+    var personExist = true;
+    //20180323zhf1533
+    $("#recipient-name").on("blur", function (e) {
+        if (this.value.trim().length == 0) {
+            verifyFlag = false;
+            $(this).closest("div").addClass("has-error");
+            $("#lblname").html("请填写真实姓名");
+        } else {
+            //通过personname先判断是否存在员工
+            $.ajax({
+                type: "POST",
+                url: "/platform/base/person/getCountByPersonName",
+                data: {personname: $("#recipient-name").val()},
+                success: function (data) {
+                    if (data == 0) {
+                        $("#recipient-name").closest("div").addClass("has-error");
+                        verifyFlag = false;
+                        personExist = false;
+                        $("#lblname").html("该员工不存在");
+                    } else {
+                        personExist = true;
+                        $("#recipient-name").closest("div").removeClass("has-error");
+                        verifyFlag = true;
+                        $("#lblname").html("");
+                    }
+                }
+            });
+        }
+
+    });
+
+    $("#inputPassword3").on("blur", function (e) {
+        if ($(this).val() == $("#confirmPassword").val()) {
+            $("#confPassword").html("");
+            $("#confirmPassword").closest("div").removeClass("has-error");
+            $("#confirmPassword").blur();
+        }
+
+        if (this.value.length < 8) {
+            $(this).closest("div").addClass("has-error");
+            verifyFlag = false;
+            $("#lblpassword").html("密码不能少于8位");
+        } else if (this.value.length > 100) {
+            $(this).closest("div").addClass("has-error");
+            verifyFlag = false;
+            $("#lblpassword").html("密码过长!")
+        } else {
+            verifyFlag = true;
+            $(this).closest("div").removeClass("has-error");
+            $("#lblpassword").html("");
+            if ($(this).val() != $("#confirmPassword").val() && $("#confirmPassword").val().length != 0) {
+                $("#confirmPassword").blur();
+            }
+        }
+    });
+
+    $("#confirmPassword").on("blur", function (e) {
+        if ($("#confirmPassword").val().length == 0) {
+            $(this).closest("div").addClass("has-error");
+            verifyFlag = false;
+            $("#confPassword").html("再次输入您的密码");
+        } else if ($("#inputPassword3").val() != $(this).val()) {
+            $(this).closest("div").addClass("has-error");
+            verifyFlag = false;
+            $("#confPassword").html("两次密码输入不一致!");
+        } else {
+            verifyFlag = true;
+            $(this).closest("div").removeClass("has-error");
+            $("#confPassword").html("");
+        }
+    });
+
+    $("#user_number").on("blur", function (e) {
+        if (this.value.trim().length == 0 && !myLeader) {
+            $(this).closest("div").addClass("has-error");
+            verifyFlag = false;
+            $("#lblnumber").html("请填写证件号");
+        } else {
+            verifyFlag = true;
+            $(this).closest("div").removeClass("has-error");
+            $("#lblnumber").html("");
+        }
+    });
+
+    $("#recipient-tel").on("blur", function (e) {
+        if (($("#recipient-tel").val().trim().length != 0 && myLeader && !r.test($("#recipient-tel").val().trim())) || (!r.test($("#recipient-tel").val().trim()) && !myLeader)) {
+            $(this).closest("div").addClass("has-error");
+            verifyFlag = false;
+            $("#lbltel").html("请填写正确电话号码");
+        } else {
+            verifyFlag = true;
+            $(this).closest("div").removeClass("has-error");
+            $("#lbltel").html("");
+        }
+    });
+
+
+    function textBlur() {
+        //先让所有文本框失去焦点
+        $("#recipient-loginname").blur();
+        $("#inputPassword3").blur();
+        $("#confirmPassword").blur();
+        $("#recipient-name").blur();
+        $("#recipient-tel").blur();
+        $("#user_job").blur();
+        $("#user_number").blur();
+    }
+
+    function textBlur1() {
+        $("#recipient-loginname").blur();
+        $("#inputPassword3").blur();
+        $("#confirmPassword").blur();
+        $("#recipient-name").blur();
+    }
+
+
+    //基本信息校验
+    function baseInfoVerify() {
+        if (!personExist) {
+            $("#recipient-name").closest("div").addClass("has-error");
+            verifyFlag = false;
+            $("#lblname").html("该员工不存在");
+            Toast.warning("该员工不存在");
+        }
+
+        //登录用户名
+        if ($("#recipient-loginname").val().trim().length == 0) {
+            $(this).closest("div").addClass("has-error");
+            verifyFlag = false;
+            $("#lblloginname").html("请填写登录用户名");
+            Toast.warning("请填写您的用户名");
+        }
+        //登录密码
+        if ($("#inputPassword3").val().length < 8) {
+            $(this).closest("div").addClass("has-error");
+            verifyFlag = false;
+            $("#lblpassword").html("密码不能少于8位");
+            Toast.warning("密码不能少于8位");
+        }
+        if ($("#inputPassword3").val().length >= 100) {
+            $(this).closest("div").addClass("has-error");
+            verifyFlag = false;
+            $("#lblpassword").html("密码过长!");
+            Toast.warning("密码过长!");
+        }
+        //真实姓名
+        if ($("#recipient-name").val().trim().length == 0) {
+            $(this).closest("div").addClass("has-error");
+            verifyFlag = false;
+            $("#lblname").html("请填写真实姓名");
+            Toast.warning("请填写您的真实姓名");
+        }
+        if ($("#inputPassword3").val().length === 0) {
+            $(this).closest("div").addClass("has-error");
+            $("#confPassword").html("请填写您的确认密码!");
+            verifyFlag = false;
+            Toast.warning("请先填写您的确认密码");
+        }
+        if ($("#inputPassword3").val() != $("#confirmPassword").val()) {
+            $(this).closest("div").addClass("has-error");
+            $("#confPassword").html("两次输入的密码不一致");
+            verifyFlag = false;
+            Toast.warning("两次输入的密码不一致");
+        }
+    }
+    var personalFlag = true;
+    //个人信息校验
+    function personalInfoVerify() {
+        //证件号没填
+        if ($("#user_number").val().trim().length == 0 && !myLeader) {
+            personalFlag = false;
+            verifyFlag = false;
+            $("#user_number").closest("div").addClass("haserror");
+            Toast.warning("请填写证件号")
+            $("#lblnumber").html("请填写证件号");
+            $("#user_number").attr("required", true);
+            $("#user_number").prev("span").show();
+            $("#user_number").attr("required", true);
+        }else{
+            personalFlag = true;
+        }
+
+        //电话
+        //1.电话号不正确(没填或不符合规范)
+        if (($("#recipient-tel").val().trim().length != 0 && myLeader && !r.test($("#recipient-tel").val().trim())) || (!r.test($("#recipient-tel").val().trim()) && !myLeader)) {
+            $("#recipient-tel").closest("div").addClass("has-error");
+            personalFlag = false;
+            verifyFlag = false;
+            Toast.warning("请填写正确电话号码");
+            $("#lbltel").html("请填写正确电话号码");
+            $("#recipient-tel").attr("required", true);
+        }else{
+            personalFlag = true;
+        }
+    }
+    var nextFlag = false;
+    function registRequest(comtype){
+
+
+        //先让所有文本框失去焦点
+        if("leaderCom"==comtype){
+            textBlur1();
+        }else{
+            personalInfoVerify()
+            if(!personalFlag){
+                return;
+            }
+        }
+
+        //20180323zhf0946
+        if ($("#recipient-loginname").val().trim().length > 0 && $("#inputPassword3").val().length >= 8 && $("#inputPassword3").val().length <= 100 && ($("#inputPassword3").val() === $("#confirmPassword").val()) && $("#recipient-name").val().trim().length > 0 && rightUpload) {
+
+            //用户名,密码,确认密码，真实姓名都填写正确了(先验证领导也必须填的,公共验证)
+            $("#lblloginname").html("");
+            $("#lblpassword").html("");
+            $("#lblname").html("");
+            $("#confPassword").html("");
+            if(nextFlag){
+                    haveErrorMsg(comtype);
+            }else{
+                judgeLeaderByPersonNameAndCardIdAjax(comtype);
+            }
+        } else {
+            baseInfoVerify();
+        }
+    }
+
+    //20180323zhf0955
+    var needAuditFlag = false;
+    var err;
+    var msg;
+
+    function haveErrorMsg(comtype) {
+        $.ajax({
+            async:false,
+            type: "POST",
+            url: "/platform/base/person/judgeLeaderByPersonNameAndCardId",
+            data: {
+                personname: $("#recipient-name").val().trim(),
+                cardid: $("#user_number").val().trim(),
+                unitid: $("#corp option:selected").val().trim()
+            },
+            success: function (data) {
+                if (data.errMsg) {
+                    msg = data.errMsg;
+                }else{
+                    msg = "";
+                }
+                return;
+            }
+        });
+    }
+    function judgeLeaderByPersonNameAndCardIdAjax(comtype) {
+        $.ajax({
+            type: "POST",
+            url: "/platform/base/person/judgeLeaderByPersonNameAndCardId",
+            data: {
+                personname: $("#recipient-name").val().trim(),
+                cardid: $("#user_number").val().trim(),
+                unitid: $("#corp option:selected").val().trim()
+            },
+            success: function (data) {
+                if (data.errMsg) {
+                    err = data.errMsg;
+                    Toast.error(err);
+                    return;
+                }else{
+                    console.debug(data)
+                    err = null;
+                    //没有错误信息
+                    if (data.isLeader || (r.test($("#recipient-tel").val().trim()) && $("#user_number").val().trim().length > 0) || data.needAudit) {
+                        if (data.needAudit) {
+                            needAuditFlag = true;
+                            Toast.warning(data.needAudit);
+                        }
+                        //如果是领导或者已经填写了证件号和正确的电话号码
+                        if (data.isLeader) {
+                            leader = true;
+                        } else {
+                            leader = false;
+                        }
+                        //去掉电话提示信息
+                        $("#lbltel").html("");
+                        $("#recipient-tel").attr("required", false)
+                        //去掉证件号提示信息
+                        $("#lblnumber").html("");
+                        $("#user_number").prev("span").hide();
+                        //图片
+                        upflag = false;
+                        //
+                        userAndUseraddAjax(comtype);
+                    } else {
+                        //有错误信息
+                        if (!firstPage) {
+                            personalInfoVerify();
+                        } else {
+                            Toast.warning("您还需要完善您的个人资料!");
+                            goToPersonalInfo();
+                        }
+                        //上传图片
+                        if ($("#ufile")[0].files.length > 0 && !upflag){
+                            $(this).closest("div").addClass("has-error");
+                            Toast.warning("请先上传图片再提交注册");
+                        }
+                    }
+                }
+
+            }
+        });
+    }
+
+    var myLeader = false;
+
+    function judgeLeader() {
+        $.ajax({
+            async: false,
+            type: "POST",
+            url: "/platform/base/person/judgeLeaderByPersonNameAndCardId",
+            data: {
+                personname: $("#recipient-name").val().trim(),
+                cardid: $("#user_number").val().trim(),
+                unitid: $("#corp option:selected").val().trim()
+            },
+            success: function (data) {
+                if (data.isLeader) {
+                    myLeader = true;
+                } else {
+                    myLeader = false;
+                }
+            }
+        });
+    }
+
+    var leader = false;
+
+    //添加sys_user和sys_useradd by zhf
+    function userAndUseraddAjax(comtype) {
+        $.post(
+            "${base!}/platform/sys/user/addUser",
+            {
+                "username": $("#recipient-name").val().trim(),
+                "loginname": $("#recipient-loginname").val().trim(),
+                "password": $("#inputPassword3").val(),
+                "unitid": $("#corp option:selected").val().trim(),
+                "cardid": $("#user_number").val().trim(),
+                "airportid": $("#airport option:selected").val().trim(),
+                "needAuditFlag": needAuditFlag,
+                "leader": leader
+            },
+            function (d) {
+                if (d) {
+                    var userid = d.id;
+                    $.post(
+                        "${base!}/platform/sys/useradd/insertUseradd",
+                        {
+                            "userid": userid,
+                            "cardid": $("#user_number").val().trim(),
+                            "tel": $("#recipient-tel").val().trim(),
+                            "pictureads":$("#pictureads").val().trim(),
+                            "jobs": $("#user_job").val().trim(),
+                            "needAuditFlag": needAuditFlag
+                        },
+                        function (data) {
+                            if (data.code==0) {
+                                if (!needAuditFlag) {
+                                    if (comtype == "leaderCom") {
+                                        $("#baseInfo").removeClass("card1");
+                                        $("#baseInfo").addClass("card2");
+                                        $("#baseInfo").css("display", "none");
+                                    } else if (comtype == "personalCom") {
+                                        $("#personalInfo").removeClass("card1");
+                                        $("#personalInfo").addClass("card2");
+                                        $("#personalInfo").css("display", "none");
+                                    } else{
+                                        $("#otherInfo").removeClass("card1");
+                                        $("#otherInfo").addClass("card2");
+                                        $("#otherInfo").css("display", "none");
+                                    }
+                                    if(!err){
+                                        Toast.success("账户注册成功");
+                                        goToRegistSuccess();
+                                    }
+                                }else{
+                                    $("#recipient-loginname").val("");
+                                    $("#inputPassword3").val("");
+                                    $("#confirmPassword").val("");
+                                    $("#recipient-name").val("");
+                                }
+                            } else {
+                                if (comtype == "leaderCom") {
+                                    $("#baseInfo").removeClass("card1");
+                                    $("#baseInfo").addClass("card2");
+                                    $("#baseInfo").css("display", "none");
+                                } else if (comtype == "personalCom") {
+                                    $("#personalInfo").removeClass("card1");
+                                    $("#personalInfo").addClass("card2");
+                                    $("#personalInfo").css("display", "none");
+                                } else if (comtype == "otherCom") {
+                                    $("#otherInfo").removeClass("card1");
+                                    $("#otherInfo").addClass("card2");
+                                    $("#otherInfo").css("display", "none");
+                                }
+                                goToRegistFail("");
+                                Toast.error(data.msg);
+                            }
+                        });
+                }
+            });
+    }
+
+</script>
+</body>
+</html>

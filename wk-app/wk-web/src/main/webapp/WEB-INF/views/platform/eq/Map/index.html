@@ -1,0 +1,297 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<style type="text/css">
+    .zw sup{color:#FFFFFF; text-align: center; line-height: 45px; font-size: 14px;}
+    .info {
+        /*position: fixed;*/
+    }
+    div.info-top {
+        position: relative;
+        background: none repeat scroll 0 0 #F9F9F9;
+        border-bottom: 1px solid #CCC;
+        border-radius: 5px 5px 0 0;
+    }
+    div.info-top div {
+        display: inline-block;
+        color: #333333;
+        font-size: 14px;
+        font-weight: bold;
+        line-height: 31px;
+        padding: 0 10px;
+    }
+    div.info-top img {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        transition-duration: 0.25s;
+    }
+    div.info-top img:hover {
+        box-shadow: 0px 0px 5px #000;
+    }
+    div.info-middle {
+        font-size: 12px;
+        padding: 6px;
+        line-height: 20px;
+    }
+    div.info-bottom {
+        height: 0px;
+        width: 100%;
+        clear: both;
+        text-align: center;
+    }
+    div.info-bottom img {
+        position: relative;
+        z-index: 104;
+    }
+    span {
+        margin-left: 5px;
+        font-size: 11px;
+    }
+    .info-middle img {
+        float: left;
+        margin-right: 6px;
+    }
+</style>
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="content-wrap">
+            <div class="wrapper" style="min-height:500px;">
+                <span class="label label-default" style="background-color: #0c0c0c" onclick="refresh('dark')" >&nbsp;&nbsp;</span>
+                <span class="label label-default" style="background-color: #9fadbd" onclick="refresh('light')">&nbsp;&nbsp;</span>
+                <span class="label label-default" style="background-color: #00aa3a" onclick="refresh('fresh')">&nbsp;&nbsp;</span>
+                <span class="label label-default" style="background-color: #DDDDDD" onclick="refresh('')">&nbsp;&nbsp;</span>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="maps" style="height: 90%;">
+    </div>
+</div>
+
+<script src="http://webapi.amap.com/maps?v=1.3&key=de8519526746616cb6dfaed57aee2f17&callback=initMapzw"></script>
+
+<script>
+    var datatable;
+    var markers = [];
+    var map;
+    var position ="${obj.position!}";
+    var arr=new Array();
+    arr=position.split(",");
+    function initMapzw () {
+        map= new AMap.Map('maps',{
+            mapStyle: 'amap://styles/dark',//样式URL
+            zoom: 15,
+            center:[arr[0],arr[1]]
+        });
+        map.plugin(["AMap.ToolBar"], function() {
+            map.addControl(new AMap.ToolBar());
+        });
+        map.on('complete', function() {
+            //加载中心点图标
+            new AMap.Marker({
+                map: map,
+                position: [arr[0], arr[1]],
+                icon: new AMap.Icon({
+                    size: new AMap.Size(24, 32),  //图标大小
+                    image: "${base!}/assets/img/bvcloud/center.svg"
+                })
+            });
+
+            //加载固定点位置
+            $.post("${base}/platform/eq/stake/getposition", {}, function (data) {
+                data.forEach(function(marker) {
+                    //实例化信息窗体
+                    var marker;
+                    var count=0;
+                    var title = marker.stakename,
+                        content = [];
+                    content.push("<table class='table' id='sqtable' ><thead><tr><th width='100px'>设备编号</th><th width='100px'>设备名称</th><th width='100px'>状态</th><th width='100px'>设备状态</th></tr></thead><tbody></tbody></table>");
+                    var arrplace=new Array();
+                    var position= marker.position;
+                    arrplace=position.split(",");
+                    var stakeid = marker.id;
+                    var img="";
+
+
+
+
+                    $.post("${base}/platform/eq/use/getstakecount", {stakeid:stakeid}, function (data) {
+                        if(data.use==0){
+                            img="/assets/img/map/zb1.svg"
+                        }else{
+                            if(data.errcount != "0"){
+                                img="/assets/img/map/zb4.svg"
+                            }else{
+                                if(data.overtime != "0"){
+                                    img="/assets/img/map/zb3.svg"
+                                }else{
+                                    if(data.wncount != "0"){
+                                        img="/assets/img/map/zb2.svg"
+                                    }else{
+                                        img="/assets/img/map/zb.svg"
+                                    }
+                                }
+                            }
+                        }
+                         marker= new AMap.Marker({
+                            map: map,
+                            position: [arrplace[0], arrplace[1]],
+                            content: '<div class="marker-route marker-marker-bus-from"><div class="zw" align="center" style="background: url('+ img + ') center no-repeat; background-size: cover; width: 32px;height: 36px"><sup>'+data.use+'</sup></div></div>',  //自定义点标记覆盖物内容
+                        });
+                        AMap.event.addListener(marker, 'click', function() {
+                            map.clearInfoWindow();
+                            var infoWindow = new AMap.InfoWindow({
+                                isCustom: true,  //使用自定义窗体
+                                content: createInfoWindow(title, content.join("<br/>")),
+                                offset: new AMap.Pixel(16, -45)
+                            });
+                            infoWindow.open(map, marker.getPosition());
+                            setTimeout(function () {
+                                initDatatable(stakeid);
+                            }, 100);
+                        });
+                    });
+                });
+            }, "json");
+
+        });
+
+    }
+
+
+    function refresh(enName) {
+        map.setMapStyle('amap://styles/'+enName);
+    }
+
+    var markers = [];
+    var bind = function () {
+        map.remove(markers);
+        $.post("${base}/platform/base/personpool/getPersonPo", {status:1}, function (data) {
+            data.forEach(function(marker) {
+                var arrpo=new Array();
+                var position= marker.position;
+                arrpo=position.split(",");
+                marker=new AMap.Marker({
+                    map: map,
+                    position: [arrpo[0], arrpo[1]],
+                    icon: new AMap.Icon({
+                        size: new AMap.Size(38, 47),  //图标大小
+                        image: "/assets/img/bvcloud/person.svg",
+                    })
+                });
+                markers.push(marker);
+            });
+        }, "json");
+    }
+    var MapRef= "${MapRef!}";
+    setInterval(bind,1000*60*MapRef);
+
+    //构建自定义信息窗体
+    function createInfoWindow(title, content) {
+        var info = document.createElement("div");
+        info.className = "info";
+
+        //可以通过下面的方式修改自定义窗体的宽高
+        info.style.width = "600px";
+        // 定义顶部标题
+        var top = document.createElement("div");
+        var titleD = document.createElement("div");
+        var closeX = document.createElement("img");
+        top.className = "info-top";
+        titleD.innerHTML = title;
+        closeX.src = "http://webapi.amap.com/images/close2.gif";
+        closeX.onclick = closeInfoWindow;
+
+        top.appendChild(titleD);
+        top.appendChild(closeX);
+        info.appendChild(top);
+
+        // 定义中部内容
+        var middle = document.createElement("div");
+        middle.className = "info-middle";
+        middle.style.backgroundColor = 'white';
+        middle.innerHTML = content;
+        info.appendChild(middle);
+
+        // 定义底部内容
+        var bottom = document.createElement("div");
+        bottom.className = "info-bottom";
+        bottom.style.position = 'relative';
+        bottom.style.top = '0px';
+        bottom.style.margin = '0 auto';
+        var sharp = document.createElement("img");
+        sharp.src = "http://webapi.amap.com/images/sharp.png";
+        bottom.appendChild(sharp);
+        info.appendChild(bottom);
+        return info;
+    }
+
+    //关闭信息窗体
+    function closeInfoWindow() {
+
+        map.clearInfoWindow();
+    }
+
+    function initDatatable(stakeid) {
+
+        $('#sqtable').dataTable().fnDestroy();
+        datatable = $('#sqtable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "bInfo" : true,//是否显示页数信息
+            "paging": true,
+            "scrollY":"200px",
+            "language": {
+                "url": "${base}/assets/plugins/datatables/${lang}.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/platform/eq/use/data",
+                "type": "post",
+                "data": function (d) {
+                    d.stakeid=stakeid;
+                }
+            },
+            "order": [[2, "desc"]],
+            "columns": [
+                {"data": "eqMateriel.eqnum", "bSortable": true,"render": function (data, type, row, meta) {
+                    data = data || "";
+                    if(data == ""){return "";}else{return data;}
+                }},
+                {"data": "eqMateriel.eqname", "bSortable": true,"render": function (data, type, row, meta) {
+                    data = data || "";
+                    if(data == ""){return "";}else{return data;}
+                }},
+                {"data": "pstatus", "bSortable": true,"render": function (data, type, row, meta) {
+                    data = data || "";
+                    if(data == ""){return "";}else{return geteqStstus(data);}
+                }},
+                {"data": "errstatus", "bSortable": true,"render": function (data, type, row, meta) {
+                    data = data || "";
+                    if(data == ""){return "";}else{return getuseStstus(data);}
+                }}
+
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+</script>
+
+
+
+<%}%>

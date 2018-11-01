@@ -1,0 +1,522 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<section class="content-wrap bg-white">
+    <header class="header navbar bg-white shadow">
+        <div class="btn-group tool-button text-left " style="width: 92%">
+            <label class="form-control" style="position: relative;top:10px; border:none; left:-6px;"  id="headfilter"></label>
+        </div>
+        <div class="pull-right offscreen-right">
+            <button class="btn btn-primary navbar-btn" onclick="sublime.toggleFilter('.cd-panel')"><i
+                    class="fa fa-sliders"></i> 筛选
+            </button>
+        </div>
+    </header>
+
+    <div class="cd-panel from-right">
+        <header class="cd-panel-header">
+            <h4>高级筛选</h4>
+        </header>
+        <div class="cd-panel-container">
+            <div class="cd-panel-content shadow">
+                <div class="form-group">
+                    <label for="starttime">开始时间</label>
+                    <input type="month" id="starttime" name="starttime" onclick="this.value=''" value="2017-01" class="form-control" placeholder="2017-01" autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="endtime">结束时间</label>
+                    <input type="month" id="endtime" name="endtime" onclick="this.value=''" value="2017-12" class="form-control" placeholder="2017-12">
+                </div>
+                <div class="form-group">
+                    <label>航空公司</label>
+                    <div class="form-group" id="aircorp">
+                        <!--<input type="checkbox" value="1" checked="checked"><label>东方航空</label><br>-->
+                        <!--<label><input type="checkbox" value="2">南方航空</label><br>-->
+                        <!--<label><input type="checkbox" value="3">昆明航空</label>-->
+                    </div>
+
+                    <!--<input type="checkbox" value="4">-->
+                </div>
+                <button id="searchBtn" type="button" class="btn btn-primary">查询</button>
+
+                <!--<button id="resetBtn" type="button" class="btn btn-default">重置</button>-->
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+
+        <div class="table-responsive no-border" >
+            <div class="row" id="tchart">
+
+            </div>
+            <table id ="datatable" class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                    <tr>
+                        <th>公司名称</th>
+                        <th>开始时间</th>
+                        <th>结束时间</th>
+                        <th>借用次数</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+    </div>
+</section>
+
+<script src="${base!}/assets/js/echarts.js" type="application/javascript" language="JavaScript"></script>
+<script src="${base!}/assets/js/shine.js" type="application/javascript" language="JavaScript"></script>
+
+<script language="JavaScript">
+    var datatable;
+    var unitname=[];
+    var unitnumber=[];
+    var starttime;
+    var endtime;
+    var units="";
+    var showunit="";//用于显示筛选条件的单位名称
+    function initDatatable() {
+
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/${lang}.json"
+            },
+            "ajax": {
+                "url": "${base}/platform/eq/Map/geteqtotal_data",
+                "type": "post",
+                "data":function(d){
+                        d.units=units,
+                        d.starttime=starttime,
+                        d.endtime=endtime
+                }
+            },
+            "order": [[1, "desc"]],
+            "columns": [
+                    {"data": "name", "bSortable": true,"render": function (data, type, row, meta) {
+
+//                        if($.inArray(data,unitname)==-1){
+//                            unitname.push(data);
+//                        }
+//                        alert(2);
+
+                        return data;
+                    }},
+                    {"data": "start", "bSortable": true, "render": function (data, type, row, meta) {
+
+                        return $("#starttime").val();
+                    }},
+                    {"data": "end", "bSortable": true, "render": function(data,type,row,meta){
+                        return $("#endtime").val();
+                    }},
+                    {"data": "number", "bSortable": true,"render": function (data, type, row, meta) {
+
+                        return data;
+                    }}
+
+            ]
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+        });
+        $("#searchBtn").on('click', function () {
+            starttime="'"+document.getElementById("starttime").value+"";
+            endtime="'"+document.getElementById("endtime").value+"";
+               // alert(endtime);
+
+            units="";
+            showunit="";
+            for(var i=0;i<$("#aircorp").children("input").length;i++){
+//                    alert($("#aircorp").children("input")[i].value);
+                if($("#aircorp").children("input")[i].checked){
+                    if(units.length>0){
+                        units+=",";
+                        showunit+=",";
+                    }
+                    units+="'"+$("#aircorp").children("input")[i].value+"'";
+                    showunit+=$("#aircorp").children("input")[i].name;
+
+                }
+            }
+
+//            alert(starttime=="''");
+
+            if(units.length==0||starttime=="''"||endtime=="''")
+            {
+                alert("航空公司、开始时间、结束时间不能为空");
+                return false;
+            }
+            initchart();
+//            unitnumber.splice(0,unitnumber.length);
+//            alert(unitnumber);
+            showFilter();
+            datatable.ajax.reload();
+
+        });
+
+
+
+    }
+
+    function structfilter(data){
+        if(data.length>0){
+            var air=document.getElementById("aircorp");
+            for(var i=0;i<data.length;i++){
+                var label=document.createElement("label");
+                label.innerHTML+="&nbsp;&nbsp;&nbsp;&nbsp;"+data[i].name;
+                unitname.push(data[i].name);
+                var input=document.createElement("input");
+                input.type="checkbox";
+                input.value=data[i].id;
+                input.name=data[i].name;
+                input.id="input"+i;
+                input.setAttribute("checked","checked");
+                var br;
+                if(i<=data.length-1)
+                    br=document.createElement("br");
+
+                air.appendChild(input);
+                air.appendChild(label);
+                if(br)
+                    air.appendChild(br);
+
+
+                document.getElementById(input.id).addEventListener("click",function(){
+                    if(this.checked==false){
+//                        alert(units.indexOf(this.value)+"|"+units+"|"+this.value);
+                        if(units.indexOf("'"+this.value+"'")>0){
+
+                            units=units.replace(",'"+this.value+"","");
+                        }else{
+                            if(units.split(",").length>1){
+//                                alert("'"+this.value+"'");
+                                units=units.replace("'"+this.value+"',","");
+                            }else {
+                                units=units.replace("'"+this.value+"'","");
+                            }
+                        }
+                    }else{
+                        if(units.length>0){
+                            units+=",'"+this.value+"'";
+                        }else{
+                            units+="'"+this.value+"'";
+                        }
+
+                    }
+                });
+            }
+        }
+    }
+
+
+    $(function () {
+
+        getunits();
+
+        initchart();
+        setTimeout(function(){showFilter();},500);
+
+    });
+
+    function initchart(){
+        setTimeout(function(){
+            $.post("${base}/platform/eq/Map/geteqtotal_data",{"units":units,"starttime":starttime,"endtime":endtime},function(d){
+                if(d){
+                    unitname.splice(0,unitname.length);
+                    unitnumber.splice(0,unitnumber.length);
+                    for(var i=0;i<d.data.length;i++){
+//                        alert(d.data[i].name+"|"+d.data[i].number);
+                        unitname.push(d.data[i].name);
+                        unitnumber.push(d.data[i].number);
+                    }
+                }
+            })
+        },500)
+
+
+        setTimeout(function(){
+            document.getElementById("tchart").style.height = "40%";
+            document.getElementById("tchart").style.width = "90%";
+            document.getElementById("tchart").style.position = "fixed";
+
+            var myChart = echarts.init(document.getElementById('tchart'),'shine');
+//            alert(unitnumber);
+            var option = {
+                title:{
+                    text:'设备使用汇总'
+                },
+                tooltip : {
+                    trigger: 'axis'//,
+//                    axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+//                        type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+//                    }
+                },
+                legend: {
+                    data:unitname
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+//                        dataView : {show: true, readOnly: false},
+                        magicType : {show: true, type: ['line', 'bar']},
+//                        restore : {show: true},
+//                        saveAsImage : {show: true}
+                    },
+                    right:90
+                },
+                calculable : true,
+                xAxis : [
+                    {
+                        type : 'category',
+                        data : unitname,
+//                        axisTick: {
+//                            alignWithLabel: true
+//                        }
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value'
+                    }
+                ],
+                series : [
+                    {
+                        name:'使用次数',
+                        type:'bar',
+                        data:unitnumber,
+                        markPoint : {
+                            data : [
+                                {type : 'max', name: '最大值'},
+                                {type : 'min', name: '最小值'}
+                            ]
+                        },
+                        markLine : {
+                            data : [
+                                {type : 'average', name: '平均值'}
+                            ]
+                        }
+                    }
+                ],
+                // color: ['#4775d1'],
+                "themeName": "shine",
+                "theme": {
+                    "seriesCnt": 4,
+                    "backgroundColor": "rgba(0,0,0,0)",
+                    "titleColor": "#333333",
+                    "subtitleColor": "#aaaaaa",
+                    "textColorShow": false,
+                    "textColor": "#333",
+                    "markTextColor": "#ffffff",
+                    "color": [
+                        "#d0021b",
+                        "#4a90e2",
+                        "#f5a623",
+                        "#7ed321",
+                        "#9013fe",
+                        "#8b572a",
+                        "#9b9b9b"
+                    ],
+                    "borderColor": "#ffffff",
+                    "borderWidth": "0",
+                    "visualMapColor": [
+                        "#4a90e2",
+                        "rgba(124,200,255,0.51)"
+                    ],
+                    "legendTextColor": "#333333",
+                    "kColor": "#c12e34",
+                    "kColor0": "#2b821d",
+                    "kBorderColor": "#c12e34",
+                    "kBorderColor0": "#2b821d",
+                    "kBorderWidth": 1,
+                    "lineWidth": "2",
+                    "symbolSize": "5",
+                    "symbol": "emptyCircle",
+                    "symbolBorderWidth": "2",
+                    "lineSmooth": true,
+                    "graphLineWidth": 1,
+                    "graphLineColor": "#aaaaaa",
+                    "mapLabelColor": "#333333",
+                    "mapLabelColorE": "#333333",
+                    "mapBorderColor": "#eeeeee",
+                    "mapBorderColorE": "#ffffff",
+                    "mapBorderWidth": 0.5,
+                    "mapBorderWidthE": "1",
+                    "mapAreaColor": "#dddddd",
+                    "mapAreaColorE": "rgba(230,182,0,1)",
+                    "axes": [
+                        {
+                            "type": "all",
+                            "name": "通用坐标轴",
+                            "axisLineShow": true,
+                            "axisLineColor": "#333",
+                            "axisTickShow": true,
+                            "axisTickColor": "#333",
+                            "axisLabelShow": true,
+                            "axisLabelColor": "#333",
+                            "splitLineShow": true,
+                            "splitLineColor": [
+                                "#ccc"
+                            ],
+                            "splitAreaShow": false,
+                            "splitAreaColor": [
+                                "rgba(250,250,250,0.3)",
+                                "rgba(200,200,200,0.3)"
+                            ]
+                        },
+                        {
+                            "type": "category",
+                            "name": "类目坐标轴",
+                            "axisLineShow": true,
+                            "axisLineColor": "#333",
+                            "axisTickShow": true,
+                            "axisTickColor": "#333",
+                            "axisLabelShow": true,
+                            "axisLabelColor": "#333",
+                            "splitLineShow": false,
+                            "splitLineColor": [
+                                "#ccc"
+                            ],
+                            "splitAreaShow": false,
+                            "splitAreaColor": [
+                                "rgba(250,250,250,0.3)",
+                                "rgba(200,200,200,0.3)"
+                            ]
+                        },
+                        {
+                            "type": "value",
+                            "name": "数值坐标轴",
+                            "axisLineShow": true,
+                            "axisLineColor": "#333",
+                            "axisTickShow": true,
+                            "axisTickColor": "#333",
+                            "axisLabelShow": true,
+                            "axisLabelColor": "#333",
+                            "splitLineShow": true,
+                            "splitLineColor": [
+                                "#e2e2e2"
+                            ],
+                            "splitAreaShow": false,
+                            "splitAreaColor": [
+                                "rgba(250,250,250,0.3)",
+                                "rgba(200,200,200,0.3)"
+                            ]
+                        },
+                        {
+                            "type": "log",
+                            "name": "对数坐标轴",
+                            "axisLineShow": true,
+                            "axisLineColor": "#333",
+                            "axisTickShow": true,
+                            "axisTickColor": "#333",
+                            "axisLabelShow": true,
+                            "axisLabelColor": "#333",
+                            "splitLineShow": true,
+                            "splitLineColor": [
+                                "#e2e2e2"
+                            ],
+                            "splitAreaShow": false,
+                            "splitAreaColor": [
+                                "rgba(250,250,250,0.3)",
+                                "rgba(200,200,200,0.3)"
+                            ]
+                        },
+                        {
+                            "type": "time",
+                            "name": "时间坐标轴",
+                            "axisLineShow": true,
+                            "axisLineColor": "#333",
+                            "axisTickShow": true,
+                            "axisTickColor": "#333",
+                            "axisLabelShow": true,
+                            "axisLabelColor": "#333",
+                            "splitLineShow": true,
+                            "splitLineColor": [
+                                "#e2e2e2"
+                            ],
+                            "splitAreaShow": false,
+                            "splitAreaColor": [
+                                "rgba(250,250,250,0.3)",
+                                "rgba(200,200,200,0.3)"
+                            ]
+                        }
+                    ],
+                    "axisSeperateSetting": true,
+                    "toolboxColor": "#06467c",
+                    "toolboxEmpasisColor": "#4187c2",
+                    "tooltipAxisColor": "#cccccc",
+                    "tooltipAxisWidth": 1,
+                    "timelineLineColor": "#005eaa",
+                    "timelineLineWidth": "1",
+                    "timelineItemColor": "#005eaa",
+                    "timelineItemColorE": "#005eaa",
+                    "timelineCheckColor": "#005eaa",
+                    "timelineCheckBorderColor": "rgba(49,107,194,0.5)",
+                    "timelineItemBorderWidth": "1",
+                    "timelineControlColor": "#005eaa",
+                    "timelineControlBorderColor": "#005eaa",
+                    "timelineControlBorderWidth": "1",
+                    "timelineLabelColor": "#005eaa",
+                    "datazoomBackgroundColor": "rgba(47,69,84,0)",
+                    "datazoomDataColor": "rgba(47,69,84,0.3)",
+                    "datazoomFillColor": "rgba(167,183,204,0.4)",
+                    "datazoomHandleColor": "#a7b7cc",
+                    "datazoomHandleWidth": "100",
+                    "datazoomLabelColor": "#333333"
+                }
+
+            };
+
+            myChart.setOption(option);
+        },1500);
+    }
+
+    function showFilter(){
+        $("#headfilter").html(" <span style='font-weight: bold'>筛选条件</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;开始时间 : "+$("#starttime").val()+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;结束时间 : "+
+             $("#endtime").val());
+    }
+
+
+
+    function getunits(){
+        $.post("${base}/platform/sys/unit/getUnit",{},function(data){
+            if(data){
+                structfilter(data);
+
+                starttime="'"+document.getElementById("starttime").value+"";
+                endtime="'"+document.getElementById("endtime").value+"";
+//                alert(endtime);
+
+                units="";
+                showunit="";
+                for(var i=0;i<$("#aircorp").children("input").length;i++){
+//                    alert($("#aircorp").children("input")[i].value);
+                    if($("#aircorp").children("input")[i].checked){
+                        if(units.length>0){
+                            units+=",";
+                            showunit+=",";
+                        }
+                        units+="'"+$("#aircorp").children("input")[i].value+"'";
+                        showunit+=$("#aircorp").children("input")[i].name;
+                    }
+
+
+                }
+
+                initDatatable();
+
+
+            }
+        });
+    }
+
+
+
+
+</script>
+<%}%>

@@ -1,0 +1,266 @@
+<%
+layout("/layouts/platform.html"){
+%>
+<section class="content-wrap bg-white">
+    <header class="header navbar bg-white shadow">
+        <select id="selectBizType" class="navbar-text">
+            <option value="" selected="selected">全部</option>
+            <option value="1">预警提醒</option>
+            <option value="2">流程通知</option>
+            <option value="3">异常通知</option>
+            <option value="4">其它通知</option>
+        </select>
+
+        <select id="selectShowAll" class="navbar-text" onchange="javascript:datatable.ajax.reload();">
+            <option value="0" selected="selected">未读</option>
+            <option value="">全部状态</option>
+        </select>
+
+        <!--<input type="checkbox" name="showAll" id="showAll" class="navbar-text" onclick="javascript:datatable.ajax.reload();"/>显示未读-->
+        <div class="btn-group tool-button">
+            <!--<a id="add" class="btn btn-primary navbar-btn" href="${base}/platform/msg/message/add" data-pjax><i class="ti-plus"></i> ${msg['globals.button.add']}</a>-->
+
+        </div>
+    </header>
+    <div class=panel-body style="padding-top: 50px;">
+        <div class="table-responsive no-border">
+            <table class="table table-bordered table-striped mg-t datatable">
+                <thead>
+                <tr>
+                    <!--<th>${msg['msg.message.column.type']}</th>-->
+                    <!--<th>${msg['msg.message.column.bizType']}</th>-->
+                    <th width="80">${msg['msg.message.column.priority']}</th>
+                    <th>${msg['msg.message.column.title']}</th>
+                    <!--<th>${msg['msg.message.column.body']}</th>-->
+                    <th width="150">${msg['msg.message.column.receivetime']}</th>
+                    <!--<th>${msg['msg.message.column.receiverId']}</th>-->
+                    <th width="80">${msg['msg.message.column.senderId']}</th>
+                    <th width="50">${msg['msg.message.column.state']}</th>
+                    <!--<th>${msg['msg.message.column.airportId']}</th>-->
+                    <!--<th>${msg['msg.message.column.sourceid']}</th>-->
+                    <!--<th>${msg['msg.message.column.linkUrl']}</th>-->
+                    <!--<th>${msg['msg.message.column.extParam']}</th>-->
+                    <!--<th>${msg['msg.message.column.creater']}</th>-->
+                    <!--<th>${msg['msg.message.column.createTime']}</th>-->
+                    <th width="100">${msg['globals.table.column.operation']}</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</section>
+<div id="dialogDelete" class="modal fade bs-modal-sm" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">${msg['globals.button.delete']}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        ${msg['globals.button.delete.notice']}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">${msg['globals.button.cancel']}</button>
+                <button id="okDel" type="button" class="btn btn-primary" data-loading-text="${msg['globals.button.delete.tip']}">${msg['globals.button.confirm']}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dialogDetail" class="modal fade bs-modal-sm" tabindex="-3" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<script language="JavaScript">
+    var datatable;
+    function initDatatable() {
+        datatable = $('.datatable').DataTable({
+            "dom": '<"toolbar">frtip',
+            "searching":false,
+            "processing": false,
+            "serverSide": true,
+            "select": true,
+            "ordering": true,
+            "language": {
+                "url": "${base}/assets/plugins/datatables/${lang}.json"
+            },
+            "preDrawCallback": function () {
+                sublime.showLoadingbar($(".main-content"));
+            },
+            "drawCallback": function () {
+                sublime.closeLoadingbar($(".main-content"));
+            },
+            "ajax": {
+                "url": "${base}/platform/msg/message/data",
+                "type": "post",
+                "data": function (d) {
+                    var bizType = $("#selectBizType").val();
+                    var jsonCon = {};
+                    if(bizType==""){
+                        jsonCon["bizType"]=[1,2,3,4];
+                    }else{
+                        jsonCon["bizType"]=bizType;
+                    }
+                    jsonCon["type"]=[1,2,3];
+                    // if(!$("#showAll")[0].checked){
+                    //     jsonCon["state"]=0;
+                    // }
+                    if($("#selectShowAll").val()=="0"){
+                        jsonCon["state"]=0;
+                    }
+                    d.condition= JSON.stringify(jsonCon);
+                }
+            },
+            "order": [[4, "asc"],[2, "desc"]],
+            "columns": [
+                // {"data": "type", "bSortable": true},
+                // {"data": "bizType", "bSortable": true},
+                {"data": "priority", "bSortable": true,"render": function (data, type, row, meta) {
+                        data = data || "";
+                        if(data == 0 ){return "低";}
+                        else if(data == 1 ){return "中";}
+                        else if(data == 2 ){return "高";}
+                        else{return "";}
+                    }},
+                {"data": "title", "bSortable": true},
+                // {"data": "body", "bSortable": true},
+                {"data": "receivetime", "bSortable": true},
+                // {"data": "receiverId", "bSortable": true},
+                {"data": "senderId", "bSortable": true,"render": function (data, type, row, meta) {
+                        data = data || "";
+                        if(data == "" || !row.sender){return "系统";}else{return row.sender.username;}
+                    }},
+                {"data": "state", "bSortable": true,"render": function (data, type, row, meta) {
+                        data = data || "";
+                        if(data == 0 ){return "未读";}else if(data == 1 ){return "已读";}else{return "";}
+                    }},
+                // {"data": "airportId", "bSortable": true},
+                // {"data": "sourceid", "bSortable": true},
+                // {"data": "linkUrl", "bSortable": true},
+                // {"data": "extParam", "bSortable": true},
+                // {"data": "creater", "bSortable": true},
+                // {"data": "createTime", "bSortable": true},
+            ],
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        var tagEdit = "";
+                        if(row.linkUrl!=""){
+                            tagEdit = '<li><a href="${base}'+ row.linkUrl + '"  data-toggle="modal" data-target="#dialogDetail">查看单据</a></li>';
+                            tagEdit = tagEdit+'<li class="divider"></li>';
+                        }else{
+                            tagEdit= "" ;
+                        }
+
+                        return '<div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">' +
+                            ' <i class="ti-settings"></i> <span class="ti-angle-down"></span></button><ul class="dropdown-menu" role="menu">' +
+                            tagEdit +
+                            '<li><a href="${base}/platform/msg/message/detail/' + row.id + '" data-toggle="modal" data-target="#dialogDetail">${msg["globals.button.detail"]}</a></li>' +
+                            // '<li><a href="${base}/platform/msg/message/edit/' + row.id + '" data-pjax>${msg["globals.button.update"]}</a></li>' +
+                            // '<li class="divider"></li>' +
+                            // '<li><a href="javascript:;" onclick="del(\'' + row.id + '\')">${msg["globals.button.delete"]}</a></li>' +
+                            '</ul></div>';
+
+                    },
+                    "targets": 5
+                }
+            ],
+            "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                //每行回调函数
+                var state = aData.state;
+                if(state == "0"){
+                    //设置满足条件行的背景颜色
+                    // $(nRow).css("background", "green");
+                    //设置满足条件行的字体颜色
+                    $(nRow).css("color", "black");
+                    $(nRow).css("font-weight", "bold");
+                }
+            }
+        });
+        datatable.on('click', 'tr', function () {
+            $(this).toggleClass('selected');
+            //点击行更改数据状态
+            var row = datatable.row($(this)).data();
+            var rowel = $(this);//等同于  datatable.row($(this)).selector.rows
+            if(row.id && row.state=="0"){
+                $.post("${base}/platform/msg/message/updateState", {id:row.id,state:1}, function (data) {
+                    if(data.code=="0"){
+                        rowel.css("color", "#59595A");
+                        rowel.css("font-weight", "400");
+                        rowel.context.cells[4].innerText="已读";
+                        row.state=1;
+                        updateMessageAndMc();
+                    }
+                }, "json")
+            }
+        });
+
+        $("#searchBtn").on('click', function () {
+            datatable.ajax.reload();
+        });
+    }
+
+    function del(id) {
+        var dialog = $("#dialogDelete");
+        dialog.modal("show");
+        dialog.find("#okDel").unbind("click");
+        dialog.find("#okDel").bind("click", function (event) {
+            var btn = $(this);
+            btn.button("loading");
+            $.post("${base}/platform/msg/message/delete/" + id, {}, function (data) {
+                if (data.code == 0) {
+                    datatable.ajax.reload(null,false);
+                } else {
+                    Toast.error(data.msg);
+                }
+                btn.button("reset");
+                dialog.modal("hide");
+            }, "json");
+        });
+    }
+    function delCheck() {
+        var chks = datatable.rows('.selected').data();
+        if (chks.length > 0) {
+            var ids = [];
+            $.each(datatable.rows('.selected').data(), function (i, n) {
+                ids.push(n.id);
+            });
+            var dialog = $("#dialogDelete");
+            dialog.modal("show");
+            dialog.find("#okDel").unbind("click");
+            dialog.find("#okDel").bind("click", function (event) {
+                var btn = $(this);
+                btn.button("loading");
+                $.post("${base}/platform/msg/message/delete", {ids: ids.toString()}, function (data) {
+                    if (data.code == 0) {
+                        datatable.ajax.reload(null,false);
+                    } else {
+                        Toast.error(data.msg);
+                    }
+                    btn.button("reset");
+                    dialog.modal("hide");
+                }, "json");
+            });
+        } else {
+            Toast.warning("${msg['globals.button.delete.select']}");
+        }
+    }
+    $(function () {
+        initDatatable();
+        $("#dialogDetail").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+        });
+
+        $("#selectBizType").change(
+            function () {
+                datatable.ajax.reload();
+            }
+        );
+    });
+</script>
+<%}%>

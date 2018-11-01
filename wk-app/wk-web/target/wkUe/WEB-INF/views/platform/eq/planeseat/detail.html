@@ -1,0 +1,35 @@
+<div class="modal-body no-p">
+    <div class="row">
+        <div class="col-xs-12">
+            <section class="panel no-b">
+                <header class="panel-heading clearfix brtl brtr">
+                    <div class="overflow-hidden">
+                        <a href="javascript:;" class="h4 show no-m pt5">机位管理明细</a>
+                        <small>${obj.seatname}</small>
+                    </div>
+                </header>
+                <div class="list-group">
+                    <table class="table table-bordered table-striped mg-t datatable">
+                        <tbody>
+                                                        <tr>
+                                <td>${msg['eq.planeseat.column.seatnum']}</td><td>${obj.seatnum}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['eq.planeseat.column.seatname']}</td><td>${obj.seatname}</td>
+                            </tr>
+                                                        <tr>
+                                <td>经纬度</td><td>${obj.position}</td>
+                            </tr>
+                                                        <tr>
+                                <td>${msg['eq.planeseat.column.airportid']}</td><td><%if(!isEmpty(obj.airportid)){%>${obj.baseAirport.airportname}<%}%></td>
+                            </tr>
+                                                    </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">${msg['globals.button.ok']}</button>
+</div>

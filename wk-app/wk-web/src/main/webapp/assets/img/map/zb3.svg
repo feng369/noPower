@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="52px" height="58px" viewBox="0 0 52 58" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 44.1 (41455) - http://www.bohemiancoding.com/sketch -->
+    <title>锁 copy 22</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="桩位监控3" transform="translate(-827.000000, -415.000000)">
+            <g id="锁" transform="translate(827.055105, 415.614792)">
+                <g stroke-width="1" fill-rule="evenodd">
+                    <ellipse id="Oval-Copy-2" fill="#F6A623" cx="25.5" cy="25.1688312" rx="25.5" ry="25.1688312"></ellipse>
+                    <path d="M25.5,46.6558442 C13.4921641,46.6558442 3.75,37.0402016 3.75,25.1688312 C3.75,13.2974607 13.4921641,3.68181818 25.5,3.68181818 C37.5078359,3.68181818 47.25,13.2974607 47.25,25.1688312 C47.25,37.0402016 37.5078359,46.6558442 25.5,46.6558442 Z M25.5,43.6558442 C35.8596965,43.6558442 44.25,35.3745056 44.25,25.1688312 C44.25,14.9631567 35.8596965,6.68181818 25.5,6.68181818 C15.1403035,6.68181818 6.75,14.9631567 6.75,25.1688312 C6.75,35.3745056 15.1403035,43.6558442 25.5,43.6558442 Z" id="Oval-Copy-3" fill="#FFFFFF" fill-rule="nonzero"></path>
+                    <polygon id="Triangle" fill="#F6A623" transform="translate(25.875000, 53.298701) scale(1, -1) translate(-25.875000, -53.298701) " points="25.875 49.5974026 31.5 57 20.25 57"></polygon>
+                </g>
+                <text id="2" font-family="PingFangSC-Medium, PingFang SC" font-size="18" font-weight="400"></text>
+            </g>
+        </g>
+    </g>
+</svg>
